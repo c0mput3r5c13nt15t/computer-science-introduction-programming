@@ -1,0 +1,1 @@
+# Informatik I: Einführung in die Programmierung 2022 WS
