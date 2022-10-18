@@ -1,6 +1,6 @@
 # Notes
 
-Zeitbedarf: X.X h
+Zeitbedarf: 1.0 h
 
 ## Erfahrungen
 Gruppe: m172947g
