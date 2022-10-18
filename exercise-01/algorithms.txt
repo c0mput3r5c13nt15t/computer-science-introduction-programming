@@ -1,0 +1,44 @@
+Präzision - Die Eigenschaft der Präzision wird von der Beschreibung nicht erfüllt, da bei den
+letzten beiden Instruktionen unklar ist, diese nacheinander ablaufen oder verschachtelt sind. Die
+Überprüfung, ob k größer oder gleich b ist, könnte sowohl innerhalb, nach der Erhöhung von k, als auch außerhalb der
+wenn-Bedingung stehen. Anmerkung: Die beiden Interpretationen machen im Ergebnis
+keinen Unterschied, sie widersprechen aber dennoch der Präzision.
+
+Effektivität - Die Eigenschaft der Effektivität wird erfüllt, da alle Anweisungen (Addition, Überprüfen der Teilbarkeit, Ausgabe) durchführbar sind.
+
+Statische Finitheit - Die Eigenschaft der statischen Finitheit wird erfüllt, 
+da der Algorithmus in einem endlichen Text von 4 Sätzen dargestellt werden konnte.
+
+Dynamische Finitheit - Die Eigenschaft der dynamischen Finitheit wird erfüllt, da
+der Algorithmus lediglich drei endliche Variablen verwendet.
+
+Terminierung - Die Eigenschaft der Terminierung untersuche ich anhand folgender Fallunterscheidung:
+
+1. a und b sind gerade Zahlen:
+a  = 2n
+b  = 2m
+a + i * b = 2n + i * 2m
+a ist für jedes i eine gerade Zahl, somit wird k nach endlich vielen Schritten größer oder gleich b.
+
+2. a ist eine gerade Zahl und b ist eine ungerade Zahl:
+a  = 2n
+b  = 2m + 1
+a + i * b = 2n + i * (2m + 1) = 2n + i * 2m + i
+a ist für jedes gerade i eine gerade Zahl, somit wird k wieder nach endlich vielen Schritten größer oder gleich b.
+
+3. a ist eine ungerade Zahl und b ist eine gerade Zahl:
+a  = 2n + 1
+b  = 2m
+a + i * b = 2n + 1 + i * 2m = 2n + i * 2m + 1
+a wird nie eine gerade Zahl, somit wird k nie größer oder gleich b. Der Algorithmus terminiert nicht.
+
+4. a und b sind ungerade Zahlen:
+a  = 2n + 1
+b  = 2m + 1
+a + i * b = 2n + 1 + i * (2m + 1) = 2n + i * 2m + 1 + i
+a wird für ungerade i eine gerade Zahl, somit wird k nach endlich vielen Schritten größer oder gleich b.
+
+Der Algorithmus terminiert nicht für alle legalen Eingaben, somit ist die Eigenschaft der Terminierung nicht erfüllt.
+
+Fazit - Die umgangssprachliche, prozedurale Beschreibung erfüllt nicht alle nötigen Eigenschaften
+(Präzision, Effektivität, statische Finitheit, dynamische Finitheit, Terminierung) und ist folglich kein Algorithmus.
