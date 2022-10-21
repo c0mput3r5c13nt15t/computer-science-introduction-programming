@@ -1,16 +1,10 @@
-Präzision - Die Eigenschaft der Präzision wird von der Beschreibung nicht erfüllt, da bei den
-letzten beiden Instruktionen unklar ist, diese nacheinander ablaufen oder verschachtelt sind. Die
-Überprüfung, ob k größer oder gleich b ist, könnte sowohl innerhalb, nach der Erhöhung von k, als auch außerhalb der
-wenn-Bedingung stehen. Anmerkung: Die beiden Interpretationen machen im Ergebnis
-keinen Unterschied, sie widersprechen aber dennoch der Präzision.
+Präzision - Die Eigenschaft der Präzision wird von der Beschreibung nicht erfüllt, da bei den letzten beiden Instruktionen unklar ist, diese nacheinander ablaufen oder verschachtelt sind. Die Überprüfung, ob k größer oder gleich b ist, könnte sowohl innerhalb, nach der Erhöhung von k, als auch außerhalb der wenn-Bedingung stehen. Anmerkung: Die beiden Interpretationen machen im Ergebnis keinen Unterschied, sie widersprechen aber dennoch der Präzision.
 
 Effektivität - Die Eigenschaft der Effektivität wird erfüllt, da alle Anweisungen (Addition, Überprüfen der Teilbarkeit, Ausgabe) durchführbar sind.
 
-Statische Finitheit - Die Eigenschaft der statischen Finitheit wird erfüllt, 
-da der Algorithmus in einem endlichen Text von 4 Sätzen dargestellt werden konnte.
+Statische Finitheit - Die Eigenschaft der statischen Finitheit wird erfüllt, da der Algorithmus in einem endlichen Text von 4 Sätzen dargestellt werden konnte.
 
-Dynamische Finitheit - Die Eigenschaft der dynamischen Finitheit wird erfüllt, da
-der Algorithmus lediglich drei endliche Variablen verwendet.
+Dynamische Finitheit - Die Eigenschaft der dynamischen Finitheit wird erfüllt, da der Algorithmus lediglich drei endliche Variablen verwendet.
 
 Terminierung - Die Eigenschaft der Terminierung untersuche ich anhand folgender Fallunterscheidung:
 
