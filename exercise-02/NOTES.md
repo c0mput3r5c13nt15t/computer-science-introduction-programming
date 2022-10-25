@@ -1,6 +1,6 @@
 # Notes
 
-Zeitbedarf: X.X h
+Zeitbedarf: 0.75 h
 
 ## Erfahrungen
-YOUR TEXT HERE
+Die Aufgaben sind relativ einfach, es ist aber manchmal nicht ganz offensichtlich, was schon verwendet werden darf und was nicht.
