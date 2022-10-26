@@ -17,8 +17,9 @@ def round_down_method_3(x: float) -> float:
     return 10 * x // 10
 
 
-number = square(float(input('Kommazahl: ')))
-print('Quadriert: ', number)
-print('Methode 1: ', float(round_down_method_1(number)))
-print('Methode 2: ', float(round_down_method_2(number)))
-print('Methode 3: ', round_down_method_3(number))
+if __name__ == '__main__':
+    number = square(float(input('Kommazahl: ')))
+    print('Quadriert: ', number)
+    print('Methode 1: ', float(round_down_method_1(number)))
+    print('Methode 2: ', float(round_down_method_2(number)))
+    print('Methode 3: ', round_down_method_3(number))
