@@ -1,4 +1,4 @@
-(a) res ist von Typ float, die die letzte Operation eine Summe aus einem int und einem float ist. Der zweite Teil ist ein float, da abs(1+1j) einen float gibt und ein int potenziert mit einem float wieder einen float gibt.
+(a) res ist von Typ float, die die letzte Operation eine Addition aus einem int und einem float ist. Der zweite Summand ist ein float, da abs(1+1j) einen float gibt und ein int potenziert mit einem float wieder einen float gibt.
 (b) res ist vom Typ int, da floor und ceil beide int zurückgeben und das Produkt aus zwei int wieder einen int gibt.
 (c) res ist von Typ complex, da der zweite Teil der Summe ein complex ist, dem ist, so, da der Exponent ein complex ist.
-(d) res ist vom Typ float, da die letzte Operation eine Multiplikation aus einem int und einem float ist. Der letzte Teil ist ein float, da die ganzzahlige Division immer einen float zurückgibt.
+(d) res ist vom Typ float, da die letzte Operation eine ganzzahlige Division aus einem float (12.6) und einem int ist. Die ganzzahlige Division gibt unsinnvoller Weise einen float zurück, da dieser eine höhere "Männlichkeit" hat.
