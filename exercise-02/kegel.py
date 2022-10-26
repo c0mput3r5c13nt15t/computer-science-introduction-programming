@@ -1,8 +1,8 @@
-import math
+from math import pi
 
 
 def coneShellSurface(radius: float, height: float) -> float:
-    return math.pi * radius * (radius**2 + height**2)**0.5
+    return pi * radius * (radius**2 + height**2)**0.5
 
 
 radius = float(input('Radius: '))
