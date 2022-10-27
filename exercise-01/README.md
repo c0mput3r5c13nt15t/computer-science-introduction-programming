@@ -57,3 +57,17 @@ collecting ... collected 2 items
 
 ========================= 1 failed, 1 passed in 0.02s ==========================
 ```
+
+## Build 🟢 (success)
+### initialize 🟢 (success)
+```bash
+git clone $GITEA_PROTOCOL://$GITEA_USER:$GITEA_PASSWORD@$GITEA_HOST/$COURSE/$STUDENT.git $STUDENT
+```
+### lint 🟢 (success)
+```bash
+pycodestyle --ignore=E501,W292,E704,W503,W504,E731 /$STUDENT/$EXERCISE
+```
+### notes 🟢 (success)
+```bash
+./validate_notes $STUDENT $EXERCISE validate_groups
+```
