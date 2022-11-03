@@ -6,4 +6,4 @@ game = Game()
 
 print('')
 io.tprint(game.playerSpaceship.name, font='small')
-gameLogic.secondScene(game)
+gameLogic.introScene(game)

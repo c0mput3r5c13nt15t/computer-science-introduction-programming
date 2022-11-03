@@ -334,8 +334,6 @@ def retreat(game: Game) -> None:
                     canCatchUp = True
                     break
 
-            canCatchUp = True  # TODO: Remove this line
-
             if canCatchUp:
                 io.printWithTypingAnimation(
                     f'But what is this? The radar shows the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} firing their engines and closing in on you.', newLines=0)
@@ -348,8 +346,7 @@ def retreat(game: Game) -> None:
                     attackingShip, game.playerSpaceship, weaponDict[choice(attackingShip.weapons)])
                 if game.playerSpaceship.hull <= 0:
                     shipExplodesEnding(game)
-                # TODO: Change this line
-                if 'distressSignalSent' in game.plotPoints and choices([True, True], [0.4, 0.6], k=1)[0]:
+                if 'distressSignalSent' in game.plotPoints and choices([True, False], [0.4, 0.6], k=1)[0]:
                     helpArrivesEnding(game)
                 io.printWithTypingAnimation(
                     'You don\'t have a choice. You are forced to surrender.', newLines=2)
@@ -372,7 +369,7 @@ def retreat(game: Game) -> None:
 def surrender(game: Game) -> None:
     io.printWithTypingAnimation(
         'This is too much for you. You know you don\'t stand a chance against the enemy, so you decide to surrender.', newLines=2)
-    surrenderInTime = choice([False, False])
+    surrenderInTime = choice([True, False])
     if surrenderInTime:
         prisonerEnding(game)
     else:
