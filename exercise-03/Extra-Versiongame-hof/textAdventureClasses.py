@@ -1,29 +1,60 @@
-from random import choice
+from random import choice, randint, choices
 
 
-class Item:
-    def __init__(self, name: str, description: str, value: int) -> None:
+MAX_PLAYERSHIP_HEALTH = 189
+
+
+class Weapon:
+    def __init__(self, name: str, damageRange: tuple[int, int], projectilesPerShot: int) -> None:
         self.name = name
-        self.description = description
-        self.value = value
+        self.damageRange = damageRange
+        self.projectilesPerShot = projectilesPerShot
 
     def __str__(self) -> str:
-        return f"{self.name}: {self.description}"
+        return self.name
+
+    def fire(self) -> tuple[int, int]:
+        totalMiss = choices([True, False], [0.1, 0.9], k=1)[0]
+        if totalMiss:
+            return 0, 0
+        projectilesHit = randint(1, self.projectilesPerShot)
+        return (randint(self.damageRange[0], self.damageRange[1]) * projectilesHit, projectilesHit)
+
+
+smallLaserTurret = Weapon("Small Laser Turret",
+                          (15, 20), 2)  # 30-40, 15-20
+missileLauncher = Weapon("Missile Launcher", (10, 15),
+                         6)  # 60-90, 10-15
+railgun = Weapon("Railgun", (50, 60), 1)  # 50-60, 50-60
+torpedoLauncher = Weapon("Torpedo Launcher", (25, 35),
+                         2)  # 50-70, 25-35
+artilleryCannon = Weapon("Artillery Cannon", (14, 20),
+                         4)  # 56-80, 14-20
+plasmaBeam = Weapon("Plasma Beam", (60, 70), 1)  # 60-70, 60-70
+gatlingGun = Weapon("Gatling Gun", (5, 8), 25)  # 125-200, 5-8
+
+weaponDict = {
+    "Small Laser Turret": smallLaserTurret,
+    "Missile Launcher": missileLauncher,
+    "Railgun": railgun,
+    "Torpedo Launcher": torpedoLauncher,
+    "Artillery Cannon": artilleryCannon,
+    "Plasma Beam": plasmaBeam,
+    "Gatling Gun": gatlingGun
+}
 
 
 class Spacecraft:
-    def __init__(self, name: str, graphic: str, crew: int, cargoSpace: int, speed: int, damage: int, hull: int, shields: int) -> None:
+    def __init__(self, name: str, graphic: str, crew: int, speed: int, hull: int, weapons: list[str]) -> None:
         self.name = name
         self.graphic = graphic
         self.crew = crew
-        self.cargoSpace = cargoSpace
         self.speed = speed
-        self.damage = damage
         self.hull = hull
-        self.shields = shields
+        self.weapons = weapons
 
     def __str__(self) -> str:
-        return f"{self.graphic}\n{self.name} - Crew: {self.crew} - Cargo Space: {self.cargoSpace} - Speed: {self.speed} - Damage: {self.damage} - Hull: {self.hull} - Shields: {self.shields}"
+        return f"{self.graphic}\n{self.name} - Crew: {self.crew} - Speed: {self.speed} - Hull: {self.hull} - Weapons: {', '.join(self.weapons)}"
 
 
 Aqua = Spacecraft("Aqua", """
@@ -32,124 +63,124 @@ Aqua = Spacecraft("Aqua", """
    [  []}{
     ] [] [=] [-*@
    :::-
-""", 10, 10, 18, 19, 81, 50)
+""", 10, 36, 81, [railgun.name, railgun.name, smallLaserTurret.name])
 Copbra = Spacecraft("Cobra", """
    }{=
      D-) (0()8<)]X(
    +[] X=0} {|X()*<>**
      D-) (0()8<)]X(
    }{=
-""", 34, 35, 131, 141, 132, 3)
+""", 34, 26, 165, [railgun.name, missileLauncher.name, missileLauncher.name])
 Stinger = Spacecraft("Stinger", """
     888))=
     -)-)-))-))-))-))-))
    (X==<>==X)>
     -)-)-))-))-))-))-))
     888))=
-""", 20, 5, 40, 260, 102, 28)
+""", 20, 40, 102, [railgun.name, railgun.name, smallLaserTurret.name, smallLaserTurret.name])
 Spike = Spacecraft("Spike", """
    8-8)=
    ) ((@)[
    -<  *) (> <] [
    ) ((@)[
    8-8)=
-""", 12, 2, 13, 380, 88, 0)
+""", 12, 49, 88, [smallLaserTurret.name, gatlingGun.name])
 Nimbus = Spacecraft("Nimbus", """
    ---x---
      -)8-8(=
    {}(&)
      -)8-8(=
      -x-
-""", 8, 5, 34, 39, 76, 0)
+""", 8, 53, 76, [smallLaserTurret.name, smallLaserTurret.name])
 Tsar = Spacecraft("Tsar", """
     88((=
    -)-)-)-)-)-)
    [~] (x-x-x)><(x-x-x)
    -)-)-)-)-)-)
     88((=
-""", 43, 30, 5, 90, 337, 20)
+""", 43, 20, 160, [torpedoLauncher.name, artilleryCannon.name])
 Shockwave = Spacecraft("Shockwave", """
     88((+
    8-8((+
    -][  O] [<)] [O(!)
    8-8((+
     88((+
-""", 17, 20, 42, 93, 69, 0)
+""", 17, 17, 69, [missileLauncher.name, railgun.name])
 Vortex = Spacecraft("Vortex", """
    <---x x--->
     {}8<>[=<><><() (D8
    +[]  X|)}8|] [8()) ((-
     {}8<>[=<><><() (D8
      <-x x->
-""", 40, 33, 54, 58, 427, 0)
+""", 40, 10, 250, [torpedoLauncher.name, smallLaserTurret.name, smallLaserTurret.name])
 Phazek = Spacecraft("Phazek", """
    8-8((=
      =+))|o|((+=
    :x:  (X==<>==X)>
      =+))|o|((+=
    8-8((=
-""", 13, 80, 73, 110, 315, 0)
+""", 13, 73, 254, [railgun.name, smallLaserTurret.name, smallLaserTurret.name, smallLaserTurret.name])
 Tilde = Spacecraft("Tilde", """
    \\~\\
     ){<>] [> <:=>
    {@(!)<>-:=}-) (8()
     ){<>] [> <:=>
    /~/
-""", 11, 5, 78, 34, 112, 50)
+""", 11, 78, 112, [missileLauncher.name, missileLauncher.name, smallLaserTurret.name])
 Pling = Spacecraft("Pling", """
    \\.
-     (+)===\
+     (+)===\\
    O=|-|OOOOO
      (+)===/
    /.
-""", 30, 300, 19, 20, 100, 67)
+""", 30, 50, 100, [plasmaBeam.name, smallLaserTurret.name])
+Hyperion = Spacecraft("Hyperion", """
+     -)8&8((+
+    >>===-
+   <[]  O
+    >>===-
+     -)8&8((+
+""", 32, 30, 94, [plasmaBeam.name, artilleryCannon.name])
+Nexus = Spacecraft("Nexus", """
+     //\\
+     -<<::0:>-=
+    *=<@O(*)
+     -<<::0:>-=
+     \\/
+""", 21, 35, 60, [gatlingGun.name, gatlingGun.name])
 Stray = Spacecraft("Stray", """
      \\+\\
     ]D-)@=<>) (]()<>
    (=+(-)+=)
     ]D-)@=<>) (]()<>
      /+/
-""", 25, 15, 50, 76, 189, 16)
-
-# class Character:
-#     def __init__(self, name: str, inventory: list[Item] = []) -> None:
-#         self.name = name
-#         self.inventory = inventory
-
-#     def printInventory(self) -> None:
-#         print(f"{self.name}'s inventory:")
-#         for item in self.inventory:
-#             print(str(item))
-
-#     def addItem(self, item: Item) -> None:
-#         self.inventory.append(item)
-
-#     def removeItem(self, item: Item) -> None:
-#         self.inventory.remove(item)
-
-
-# class Player(Character):
-#     def __init__(self, name: str, inventory: list[Item] = []) -> None:
-#         super().__init__(name, inventory)
-#         self.username = ""
-#         self.password = ""
+""", 25, 39, MAX_PLAYERSHIP_HEALTH, [railgun.name, missileLauncher.name, smallLaserTurret.name])
+friendlyHeavyCruiser1 = Spacecraft("Aurora", """
+    888(+
+  #} {(@}{o}>@> <[-|-|-|-]] [}
+   [-  [X<{o}[>X]) ((*)>
+  #} {(@}{o}>@> <[-|-|-|-]] [}
+    888(+
+""", 50, 38, 321, [railgun.name, missileLauncher.name, missileLauncher.name, gatlingGun.name, smallLaserTurret.name, smallLaserTurret.name, smallLaserTurret.name])
+friendlyHeavyCruiser2 = Spacecraft("Muinnellim", """
+    888(+
+  #} {(@}{o}>@> <[-|-|-|-]] [}
+   [-  [X<{o}[>X]) ((*)>
+  #} {(@}{o}>@> <[-|-|-|-]] [}
+    888(+
+""", 50, 38, 321, [railgun.name, missileLauncher.name, missileLauncher.name, gatlingGun.name, smallLaserTurret.name, smallLaserTurret.name, smallLaserTurret.name])
 
 
 class Game:
     def __init__(self) -> None:
         self.username: str = ""
         self.password: str = ""
+        self.catName: str = ""
         self.playerSpaceship: Spacecraft = Stray
-        self.distressSignalSent: bool = False
+        self.plotPoints: list[str] = []
         self.enemySpaceships: list[Spacecraft] = []
 
     def newEnemySpaceship(self) -> None:
         self.enemySpaceships.append(choice(
-            [Aqua, Copbra, Stinger, Spike, Nimbus, Tsar, Shockwave, Vortex, Phazek, Tilde, Pling]))
-
-    def reset(self) -> None:
-        self.username = ""
-        self.password = ""
-        self.playerSpaceship = Stray
-        self.distressSignalSent = False
-        self.enemySpaceships = []
+            [Aqua, Copbra, Stinger, Spike, Nimbus, Tsar, Shockwave, Vortex, Phazek, Tilde, Pling, Hyperion, Nexus]))
+        self.enemySpaceships = list(set(self.enemySpaceships))

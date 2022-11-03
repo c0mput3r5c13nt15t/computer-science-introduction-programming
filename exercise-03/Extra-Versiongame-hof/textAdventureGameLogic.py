@@ -2,7 +2,7 @@ from time import sleep
 import textAdventureIO as io
 from textAdventureClasses import *
 from getpass import getpass
-from random import choice, randint
+from random import choice, choices, randint
 
 
 # Intro scene
@@ -13,62 +13,72 @@ def introScene(game: Game) -> None:
     sleep(2)
     print()
     io.printWithTypingAnimation(
-        f'For a few weeks now, you have been the captain of the light cruiser "{game.playerSpaceship.name}".', newLine=False)
+        f'For a few weeks now, you have been the captain aboard the destroyer "{game.playerSpaceship.name}".', newLines=0)
     io.printWithTypingAnimation(
         'You were only a cadet when you were promoted to the rank of captain. You have never fought in a real battle, heck, you have never even been on a real spaceship before. Of course, the simulations are good, but they\'re nothing compared to commanding a real ship.')
     sleep(2)
     print()
     io.printWithTypingAnimation(
-        'You are on a routine patrol in the "Elcaro" system. There haven\'t been any hostilities in the area so far, but you are nervous nonetheless.', newLine=False)
+        'You are on a routine patrol in the "Elcaro" system. There haven\'t been any hostilities in the area so far, but you are nervous nonetheless.', newLines=0)
     io.printWithTypingAnimation(
-        'You are currently in the bridge of your ship. The bridge is a small room with a few consoles and a chair in the middle. The chair is yours. You sit down and log into the ship\'s computer.')
-    print()
+        'You are currently in the bridge of your ship. The bridge is a small room with a few consoles and a chair in the middle. The chair is yours. You sit down and log into the ship\'s computer.', newLines=2)
     print('---- Ship computer ----')
     game.username = input('Username: ')
     game.password = getpass()
-    print('-----------------------')
-    print()
-    io.printWithTypingAnimation('You check the status of the ship.')
-    print()
-    io.printProgessBar('Checking status', speed=0.5)
+    print('-----------------------\n')
+    io.printWithTypingAnimation(
+        'You check the status of the ship.', newLines=2)
+    io.printProgressBar('Checking status', speed=0.5)
     print()
     print(game.playerSpaceship)
     print()
-    io.printWithTypingAnimation('The ship is in perfect condition.')
-    print()
+    io.printWithTypingAnimation(
+        'The ship is in perfect condition.', newLines=2)
     nextScene = False
     while not nextScene:
-        match io.prompt('What do you want to do now?', ['Look around', 'Admire the ship', 'Sip coffee', 'Wait']):
+        match io.prompt('What do you want to do now?', ['Look around', 'Admire the ship', 'Sip coffee']):
             case 'Look around':
-                lookAround()
-                nextScene = choice([True, False, False])
+                game = lookAround(game)
+                nextScene = choices([True, False], weights=[1, 2], k=1)[0]
+                if 'lookedAtCat' in game.plotPoints:
+                    nextScene = True
             case 'Admire the ship':
                 admireShip(game)
             case 'Sip coffee':
                 sipCoffee()
-                nextScene = choice([True, False])
-            case 'Wait':
                 nextScene = True
     secondScene(game)
 
 
-def lookAround() -> None:
-    item = choice(['plant', 'coffee cup', 'picture of your family'])
+def lookAround(game: Game) -> Game:
+    choices = []
+    if 'lookedAtFamilyPicture' not in game.plotPoints:
+        choices.append('picture of your family')
+    if 'lookedAtPlant' not in game.plotPoints:
+        choices.append('plant')
+    if 'lookedAtCoffeeCup' not in game.plotPoints:
+        choices.append('coffee cup')
+    if 'lookedAtCat' not in game.plotPoints:
+        choices.append('cat')
+    item = choice(choices)
     io.printWithTypingAnimation(
-        'You look around the sparsly furnished room ...', newLine=False)
+        'You look around the sparsely furnished room ...', newLines=0)
 
     if item == 'plant':
+        game.plotPoints.append('lookedAtPlant')
         io.printWithTypingAnimation(
-            'You see a potted plant in the corner.', newLine=False)
+            'You see a potted plant in the corner.', newLines=0)
         io.printWithTypingAnimation(
-            'It\'s a beautiful plant, but it\'s not your favourite.', newLine=False)
+            'It\'s a beautiful plant, but it\'s not your favorite.', newLines=0)
         io.printWithTypingAnimation(
-            'You look at it for a few seconds and then turn away.')
+            'You look at it for a few seconds and then turn away.', newLines=2)
     elif item == 'coffee cup':
+        game.plotPoints.append('lookedAtCoffeeCup')
         io.printWithTypingAnimation(
-            'You see the coffee cup on the table.', newLine=False)
+            'You see the coffee cup on the table.', newLines=0)
         io.printWithTypingAnimation('You think about taking a sip.')
     elif item == 'picture of your family':
+        game.plotPoints.append('lookedAtFamilyPicture')
         io.printWithTypingAnimation(
             'You see a picture of your family on the wall.')
         print(
@@ -86,16 +96,26 @@ def lookAround() -> None:
       `''     `-'-'   `-'-'   `-'-'  `'-`'   `o' `o'
 """)
         io.printWithTypingAnimation(
-            'It makes you feel sad when you think about how much you miss them and that you might never see them again.')
-    print()
+            'It makes you feel sad when you think about how much you miss them and that you might never see them again.', newLines=2)
+    elif item == 'cat':
+        game.plotPoints.append('lookedAtCat')
+        io.printWithTypingAnimation(
+            'Out of the corner of your eye, you see a small red-brownish cat entering the bridge.', newLines=0)
+        io.printWithTypingAnimation(
+            'It looks at you with its big blue eyes and meows.', newLines=0)
+        io.printWithTypingAnimation(
+            'You pet the cat and it purrs. It likes you.', newLines=2)
+        game.catName = io.prompt('What do you want to name you little fellow?')
+        io.printWithTypingAnimation(
+            f'You could spend all day petting {game.catName}. For a short moment everything seems so peaceful ...', newLines=2)
+    return game
 
 
 def sipCoffee() -> None:
     io.printWithTypingAnimation(
-        'You reach for the coffee cup on the table next to you.', newLine=False)
+        'You reach for the coffee cup on the table next to you.', newLines=0)
     io.printWithTypingAnimation(
-        'You slowly lift the cup to your mouth and take a long sip. *slurp*')
-    print()
+        'You slowly lift the cup to your mouth and take a long sip. *slurp*', newLines=2)
 
 
 def admireShip(game: Game) -> None:
@@ -103,21 +123,20 @@ def admireShip(game: Game) -> None:
     print(game.playerSpaceship)
     print()
     io.printWithTypingAnimation(
-        'It\'s a beautiful ship. You feel proud to be her captain. But will you be able to protect her?')
-    print()
+        'It\'s a beautiful ship. You feel proud to be her captain. But will you be able to protect her?', newLines=2)
 
 
 # Second scene
 
 
 def secondScene(game: Game) -> None:
-    enemyCount = choice([1, 1, 1, 1, 2, 2, 3])
+    enemyCount = choices([1, 2, 3], [5, 2, 1], k=1)[0]
     for i in range(enemyCount):
         game.newEnemySpaceship()
     io.printWithTypingAnimation(
-        f'*Sirens blare* "Enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} detected!"', newLine=False)
+        f'*Sirens blare* "Enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} detected!"', newLines=0)
     io.printWithTypingAnimation(
-        f'You startle in your chair. What is going on? You look at the radar.', newLine=False)
+        f'You startle in your chair. What is going on? You look at the radar.', newLines=0)
     if enemyCount == 1:
         io.printWithTypingAnimation('There is one enemy ship approaching.')
     else:
@@ -164,6 +183,9 @@ def secondScene(game: Game) -> None:
                 case 'Surrender':
                     surrender(game)
         case 'Attack':
+            game.plotPoints.append('heroic')
+            io.printWithTypingAnimation(
+                f'You don\'t waste any time to think about what to do and attack the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=2)
             attack(game)
         case 'Send a distress signal':
             game = sendDistressSignal(game)
@@ -193,6 +215,7 @@ def secondScene(game: Game) -> None:
                 case 'Surrender':
                     surrender(game)
         case 'Retreat':
+            game.plotPoints.append('coward')
             retreat(game)
         case 'Surrender':
             surrender(game)
@@ -200,8 +223,7 @@ def secondScene(game: Game) -> None:
 
 def scanShips(game: Game) -> None:
     io.printWithTypingAnimation(
-        f'You instruct the Science Officer to scan the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLine=False)
-    print()
+        f'You instruct the Science Officer to scan the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.')
     for enemySpaceships in game.enemySpaceships:
         print()
         print(enemySpaceships)
@@ -209,10 +231,9 @@ def scanShips(game: Game) -> None:
 
 
 def sendDistressSignal(game: Game) -> Game:
+    game.plotPoints.append('distressSignalSent')
     io.printWithTypingAnimation(
-        'You instruct the Communications Officer to send a distress signal. Hopefully, someone will come to your aid.')
-    game.distressSignalSent = True
-    print()
+        'You instruct the Communications Officer to send a distress signal. Hopefully, someone will come to your aid.', newLines=2)
     return game
 
 
@@ -220,13 +241,76 @@ def sendDistressSignal(game: Game) -> Game:
 
 
 def attack(game: Game) -> None:
-    pass
+    while len(game.enemySpaceships) > 0:
+        # Player attack
+        nameOfWeapon = io.prompt(
+            'What weapon do you want to use?', game.playerSpaceship.weapons)
+        if len(game.enemySpaceships) == 1:
+            targetShip = game.enemySpaceships[0]
+        else:
+            nameOfShipToAttack = io.prompt('Which ship do you want to attack?', [
+                enemySpaceship.name for enemySpaceship in game.enemySpaceships])
+            targetShip = next(
+                enemySpaceship for enemySpaceship in game.enemySpaceships if enemySpaceship.name == nameOfShipToAttack)
+
+        targetShip.hull -= io.printFireWeapon(
+            game.playerSpaceship, targetShip, weaponDict[nameOfWeapon])
+
+        if targetShip.hull <= 0:
+            game = enemyShipDefeated(game, targetShip)
+
+        # Enemy attack
+        for enemySpaceship in game.enemySpaceships:
+            damage = io.printFireWeapon(
+                enemySpaceship, game.playerSpaceship, weaponDict[choice(enemySpaceship.weapons)])
+            game.playerSpaceship.hull -= damage
+
+            if damage:
+
+                if game.playerSpaceship.hull <= 0.7 * MAX_PLAYERSHIP_HEALTH and game.playerSpaceship.hull > 0.4 * MAX_PLAYERSHIP_HEALTH and 'hullIntegrityBelow70' not in game.plotPoints:
+                    io.printDialogue(
+                        'Second Officer', f'Our front shields are crumbling. Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%.', 'says')
+                    game.plotPoints.append('hullIntegrityBelow70')
+                    print()
+
+                if game.playerSpaceship.hull <= 0.4 * MAX_PLAYERSHIP_HEALTH and game.playerSpaceship.hull > 0.25 * MAX_PLAYERSHIP_HEALTH and 'hullIntegrityBelow40' not in game.plotPoints:
+                    io.printDialogue(
+                        'Second Officer', f'We\'re taking heavy damage! Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%.', 'says')
+                    game.plotPoints.append('hullIntegrityBelow40')
+                    print()
+
+                if game.playerSpaceship.hull <= 0.25 * MAX_PLAYERSHIP_HEALTH:
+                    io.printDialogue('Second Officer',
+                                     f'Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%. The reactor is destabilizing!', 'shouts')
+                    io.printDialogue('Tactics Command',
+                                     'We need to retreat NOW!', 'shouts')
+                    io.printDialogue(
+                        'First Officer', 'No! We have to fight until the end!', 'exclaims')
+                    print()
+                    if io.prompt('You will have to decide.', ['Retreat', 'Continue Attack']) == 'Retreat':
+                        retreat(game)
+                    else:
+                        game.plotPoints.append('fightToTheDeath')
+
+                if game.playerSpaceship.hull <= 0:
+                    shipExplodesEnding(game)
+
+        if 'distressSignalSent' in game.plotPoints and choices([True, False], [0.1, 0.9], k=1)[0]:
+            helpArrivesEnding(game)
+    enemyDestroyedEnding(game)
+
+
+def enemyShipDefeated(game: Game, targetShip: Spacecraft) -> Game:
+    defeat = choice(['is obliterated as it\'s reactor overheats and violently explodes',
+                    'can\'t withstand the structural damages and breaks apart', 'is rendered inoperable as the command bridge is destroyed'])
+    io.printWithTypingAnimation(f'The enemy ship {defeat}.', newLines=2)
+    game.enemySpaceships.remove(targetShip)
+    return game
 
 
 def retreat(game: Game) -> None:
     io.printWithTypingAnimation(
-        'Knowing that you cannot win and fearing for your life, you decide to retreat.')
-    print()
+        'Knowing that you cannot win and fearing for your life, you decide to retreat.', newLines=2)
     io.printDialogue(
         'First Officer', 'What are you doing, captain? We can\'t just run away!', 'asks')
     print()
@@ -235,53 +319,59 @@ def retreat(game: Game) -> None:
             io.printDialogue(
                 'You', 'I\'m sorry, but I have to do this.', 'say')
             io.printDialogue(
-                'You', 'All power to the engines and rear shields. We\'re retreating. That is an order!', 'say')
+                'You', 'All power to the engines and rear shields. We\'re retreating. That is an order!', 'command')
             io.printDialogue(
                 'First Officer', 'But captain, that will leave the colonies defenseless!', 'exclaims')
             io.printDialogue(
                 'You', 'Then so be it. I won\'t risk the lives of my crew to fight a losing battle.', 'answer')
             print()
             io.printWithTypingAnimation(
-                f'The engines roar to life and the ship starts to move away from the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLine=False)
+                f'The engines roar to life and the ship starts to move away from the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=2)
 
-            # Fastes enemy ship
             canCatchUp = False
             for enemySpaceship in game.enemySpaceships:
                 if enemySpaceship.speed > game.playerSpaceship.speed:
                     canCatchUp = True
                     break
 
+            canCatchUp = True  # TODO: Remove this line
+
             if canCatchUp:
                 io.printWithTypingAnimation(
-                    f'The enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} {"catches" if len(game.enemySpaceships) == 1 else "catch"} up to you.', newLine=False)
+                    f'But what is this? The radar shows the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} firing their engines and closing in on you.', newLines=0)
                 io.printWithTypingAnimation(
-                    'A feeling of dread fills you.')
-                print()
-                damage = randint(30, 80)
-                io.takeDamage(choice(game.enemySpaceships).name,
-                              f'your ship ({game.playerSpaceship.name})', 'hull', damage)
-                game.playerSpaceship.hull -= damage
+                    'A feeling of dread fills your stomach.', newLines=0)
+                io.printWithTypingAnimation(
+                    f'The enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} {"catches" if len(game.enemySpaceships) == 1 else "catch"} up to you and {"starts" if len(game.enemySpaceships) == 1 else "start"} attacking.', newLines=2)
+                attackingShip = choice(game.enemySpaceships)
+                game.playerSpaceship.hull -= io.printFireWeapon(
+                    attackingShip, game.playerSpaceship, weaponDict[choice(attackingShip.weapons)])
                 if game.playerSpaceship.hull <= 0:
-                    shipExplodes(game)
+                    shipExplodesEnding(game)
+                # TODO: Change this line
+                if 'distressSignalSent' in game.plotPoints and choices([True, True], [0.4, 0.6], k=1)[0]:
+                    helpArrivesEnding(game)
                 io.printWithTypingAnimation(
-                    'You don\'t have a choice. You are forced to surrender.')
+                    'You don\'t have a choice. You are forced to surrender.', newLines=2)
                 finalSurrender(game)
             else:
-                io.printWithTypingAnimation(
-                    f'You are able to outrun the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}. Your rear shields can withstand the fire.', newLine=False)
-                io.printWithTypingAnimation(
-                    'As soon as you are out of range, you jump to the nearest allied system to report the attack.')
-                print()
-                io.printWithTypingAnimation('The end.')
+                retreatEnding(game)
         case 'You\'re right. We can\'t run away.':
-            pass
-            # TODO: Implement this
+            if 'coward' in game.plotPoints:
+                game.plotPoints.remove('coward')
+            io.printDialogue(
+                'You', 'You\'re right. We can\'t run away.', 'agree')
+            io.printDialogue(
+                'You', 'Everybody on your stations! We\'re fighting!', 'command')
+            print()
+            io.printWithTypingAnimation(
+                'You bring your ship into position and give the order to fire', newLines=2)
+            attack(game)
 
 
 def surrender(game: Game) -> None:
     io.printWithTypingAnimation(
-        'This is too much for you. You know you don\'t stand a chance against the enemy, so you decide to surrender.')
-    print()
+        'This is too much for you. You know you don\'t stand a chance against the enemy, so you decide to surrender.', newLines=2)
     surrenderInTime = choice([False, False])
     if surrenderInTime:
         prisonerEnding(game)
@@ -289,18 +379,17 @@ def surrender(game: Game) -> None:
         io.printWithTypingAnimation(
             f'You\'r about to hail the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} but they have already opened fire.')
         print()
-        damage = randint(30, 80)
-        io.takeDamage(choice(game.enemySpaceships).name,
-                      f'your ship ({game.playerSpaceship.name})', 'hull', damage)
-        game.playerSpaceship.hull -= damage
+        attackingShip = choice(game.enemySpaceships)
+        game.playerSpaceship.hull -= io.printFireWeapon(
+            attackingShip, game.playerSpaceship, weaponDict[choice(attackingShip.weapons)])
         if game.playerSpaceship.hull <= 0:
-            shipExplodes(game)
+            shipExplodesEnding(game)
         io.printWithTypingAnimation(
-            'The whole ship shakes violently. You are thrown out of your chair.', newLine=False)
-        io.printWithTypingAnimation('You lie on the floor dazed and bleeding.')
-        print()
+            'The whole ship shakes violently. You are thrown out of your chair.', newLines=0)
+        io.printWithTypingAnimation(
+            'You lie on the floor dazed and bleeding.', newLines=2)
         options = ['Attack', 'Retreat']
-        if not game.distressSignalSent:
+        if 'distressSignalSent' not in game.plotPoints:
             options += ['Send a distress signal']
         match io.prompt('You are desperate. You have to do something.', options):
             case 'Attack':
@@ -319,19 +408,83 @@ def surrender(game: Game) -> None:
 
 
 def finalSurrender(game: Game) -> None:
-    surrenderInTime = choice([False, False])
+    surrenderInTime = choice([True, False])
     if surrenderInTime:
         prisonerEnding(game)
     else:
         io.printWithTypingAnimation(
-            f'You\'r about to hail the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} but then ...')
-        print()
+            f'You\'r about to hail the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} but then ...', newLines=2)
         while game.playerSpaceship.hull > 0:
-            damage = randint(30, 80)
-            io.takeDamage(choice(game.enemySpaceships).name,
-                          f'your ship ({game.playerSpaceship.name})', 'hull', damage)
-            game.playerSpaceship.hull -= damage
-        shipExplodes(game)
+            attackingShip = choice(game.enemySpaceships)
+            game.playerSpaceship.hull -= io.printFireWeapon(
+                attackingShip, game.playerSpaceship, weaponDict[choice(attackingShip.weapons)])
+        shipExplodesEnding(game)
+
+
+# Endings
+
+
+def helpArrivesEnding(game: Game) -> None:
+    io.printWithTypingAnimation(
+        'Suddenly your ship sensors show two unknown signals leaving warp right behind you.', newLines=2)
+    print(friendlyHeavyCruiser1)
+    print()
+    print(friendlyHeavyCruiser2)
+    print()
+    io.printWithTypingAnimation(
+        'You look out of the window ... It\'s two allied heavy cruisers. You are saved!', newLines=0)
+    io.printWithTypingAnimation(
+        'The two massive warships make short work of the remaining enemy forces.', newLines=2)
+    io.printWithTypingAnimation(
+        'You are hailed by the captain of one of the cruisers.', newLines=2)
+    io.printDialogue(
+        'Captain', f'Well done, captain {game.username}. Today you saved countless lives.')
+    io.printDialogue('You', 'We wouldn\'t have made it without you', 'reply')
+    io.printDialogue(
+        'Captain', 'You\'re welcome. Now let\'s get your ship to the nearest station, you look like you could need some repairs', 'says')
+    io.printDialogue(
+        'You', f'I suppose you\'ve got a point there ... {game.playerSpaceship.name} out.', 'reply')
+    print()
+    io.printWithTypingAnimation('The end.')
+    exit()
+
+
+def enemyDestroyedEnding(game: Game) -> None:
+    io.printWithTypingAnimation(
+        'It\'s finally over. You successfully fought off the enemy intruders.', newLines=2)
+
+    if 'distressSignalSent' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'The distress signal you sent earlier has been received by the fleet.', newLines=0)
+        io.printWithTypingAnimation(
+            'They are on their way to help you.', newLines=2)
+
+    if 'lookedAtFamilyPicture' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'As you let your gaze wander you notice the picture of your family is missing.', newLines=0)
+        io.printWithTypingAnimation(
+            'You look around and find it shattered on the floor.', newLines=0)
+        io.printWithTypingAnimation(
+            'You take the photo from the broken frame and put it in your pocket.', newLines=2)
+    elif 'lookedAtCat' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'Just as peace returns to the ship, you hear a meow. It\'s {game.catName}. He jumps into your lap and purrs as you gently pet him.', newLines=2)
+    elif 'lookedAtPlant' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'Relieved, look around the bridge, in the corner you see the remains of a plant pot and next to it the uprooted plant. The heavy shaking of the ship has caused it to fall over. You pick up the small plant, maybe it is your favorite plant after all.', newLines=2)
+
+    if 'distressSignalSent' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'Finally the fleet arrives. You can now return home.', newLines=2)
+
+    if 'fightToTheDeath' in game.plotPoints or 'heroic' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'When you reach your home planet you are greeted by a hero\'s welcome.', newLines=0)
+        io.printWithTypingAnimation(
+            'You are awarded the highest honors for your actions. Your bravery and courage will be remembered for generations to come.', newLines=2)
+
+    io.printWithTypingAnimation('The end.')
+    exit()
 
 
 def prisonerEnding(game: Game) -> None:
@@ -339,19 +492,46 @@ def prisonerEnding(game: Game) -> None:
         'You', f'Hail the enemy ship {"ship" if len(game.enemySpaceships) == 1 else "ships"}. We surrender.', 'instruct')
     print()
     io.printWithTypingAnimation(
-        f'Your first officer looks at you in disbelief, but he does as you say. He sends a message to the enemy ship {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLine=False)
+        f'Your first officer looks at you in disbelief, but he does as you say. He sends a message to the enemy ship {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=0)
     io.printWithTypingAnimation(
-        'The enemies board your ship and take you and your crew prisoner.', newLine=False)
+        'The enemies board your ship and take you and your crew prisoner.', newLines=0)
     io.printWithTypingAnimation(
-        'It\'s not the end you had hoped for, but at least you\'re alive.')
-    print()
+        'It\'s not the end you had hoped for, but at least you\'re alive.', newLines=2)
     io.printWithTypingAnimation('The end.')
+    exit()
 
 
-def shipExplodes(game: Game) -> None:
+def retreatEnding(game: Game) -> None:
     io.printWithTypingAnimation(
-        'It\'s over. The damage inflicted on your ship is too much. You take a last breath, then the ship explodes violently.', newLine=False)
+        f'It\'s close but you are able to outrun the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=0)
     io.printWithTypingAnimation(
-        'The explosion instantly kills you and your crew. The shattered hull of your ship floats through space as the enemy now sets course for the now unprotected colonies.')
-    print()
+        'As soon as you are out of range, you jump to the nearest allied system to report the attack but until then the colonies are defenseless prey.', newLines=0)
+    io.printWithTypingAnimation(
+        'Many civilians will die onslaught that follows your retreat.', newLines=2)
+    if 'coward' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'you managed to escape, you will pay for this cowardice.', newLines=0)
+        io.printWithTypingAnimation(
+            'Upon arriving at the allied system, you are dishonorably discharged from the military and stripped of your rank.', newLines=0)
+        io.printWithTypingAnimation(
+            'You might have saved your own life, but the guilt of letting so many people die will haunt you for the rest of your life.', newLines=2)
     io.printWithTypingAnimation('The end.')
+    exit()
+
+
+def shipExplodesEnding(game: Game) -> None:
+    io.printWithTypingAnimation(
+        'It\'s over. The damage inflicted on your ship is too severe. You take a last breath, then the ship\'s reactor explodes ...', newLines=0)
+    sleep(3)
+    io.printWithTypingAnimation(
+        'The deafening shockwave is followed by a fireball obliterating everything in it\'s way. You and your crew are already dead when the shockwave breaches the inner hull, shattering the ship into pieces. The pitiful remains of your beloved ship float through space as the enemy sets course for the now unprotected colonies.', newLines=2)
+
+    if 'heroic' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'You might have died, but your fearless actions will be remembered for generations to come. You were the sort of brave captain that will lead the Allied Systems Fleet to victory.', newLines=2)
+    elif 'lookedAtFamilyPicture' in game.plotPoints:
+        io.printWithTypingAnimation(
+            'When you family hears about your death few days later, they are devastated. Your wife can\'t stop crying and your children are inconsolable. You will be missed.', newLines=2)
+
+    io.printWithTypingAnimation('The end.')
+    exit()

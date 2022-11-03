@@ -1,5 +1,6 @@
 import os
 from random import choice
+from textAdventureClasses import Spacecraft, Weapon
 from gtts import gTTS
 from progress.bar import Bar
 import time
@@ -21,46 +22,94 @@ def makeStringSpecificLength(string: str, length: int, fill: str = ' ') -> str:
     return string + fill * (length - len(string))
 
 
-def printWithTypingAnimation(text: str, speed: float = 0.08, newLine=True) -> None:
+def printWithTypingAnimation(text: str, speed: float = 0.08, newLines=1) -> None:
     thread = Thread(target=speak, args=(text,))
     thread.start()
     for letter in text:
         print(letter, end='', flush=True)
         time.sleep(speed)
     thread.join()
-    if newLine:
-        print('')
-    else:
-        print(' ', end='')
+    print(' ', end='')
+    print('\n' * newLines, end='')
 
 
 def printDialogue(character: str, text: str, verb: str = "says") -> None:
-    # Print name of NPC and animate text
-    printWithTypingAnimation(f'{character} {verb}:', newLine=False)
+    printWithTypingAnimation(f'{character} {verb}:', newLines=0)
     printWithTypingAnimation('"' + text + '"')
 
 
-def takeDamage(dealDamageShipName: str, takeDamageShipName: str, damageTo: str, damage: int) -> None:
-    match choice(["laser", "missile", "railgun", "torpedo", "cannon"]):
-        case "laser":
+def printFireWeapon(attackingShip: Spacecraft, targetShip: Spacecraft, weapon: Weapon) -> int:
+    damage, projectilesHitting = weapon.fire()
+    match weapon.name:
+        case "Small Laser Turret":
             printWithTypingAnimation(
-                f"{dealDamageShipName} fires a laser at {takeDamageShipName} dealing {damage} damage to the {damageTo}.")
-        case "missile":
+                f'{attackingShip.name} uses it\'s {weapon.name} to fire {weapon.projectilesPerShot} lasers at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    f'{projectilesHitting} {"laser hits" if projectilesHitting == 1 else "lasers hit"}, penetrating the hull and dealing {damage} damage!')
+            else:
+                printWithTypingAnimation(f'All lasers miss!')
+        case "Missile Launcher":
             printWithTypingAnimation(
-                f"{dealDamageShipName} fires a missile at {takeDamageShipName}. The missile swirls around {takeDamageShipName} and explodes dealing {damage} damage to the {damageTo}.")
-        case "railgun":
+                f'{attackingShip.name} opens it\'s missile bays, firing {weapon.projectilesPerShot} missiles at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    f'The missiles swirl towards the ship, {weapon.projectilesPerShot - projectilesHitting} {"missile is picked up" if weapon.projectilesPerShot - projectilesHitting == 1 else "missiles are picked up"} by the point defense system. The remaining {"missile gets" if projectilesHitting == 1 else "missiles get"} through and explode dealing {damage} damage.')
+            else:
+                printWithTypingAnimation(
+                    'Just as the missiles are about to hit, the point defense system kicks in and destroys all of them!')
+        case "Railgun":
+            # Railgun can only have one projectile per shot
             printWithTypingAnimation(
-                f"{dealDamageShipName} charges up it's railgun and fires it at {takeDamageShipName} dealing {damage} damage to the {damageTo}.")
-        case "torpedo":
+                f'{attackingShip.name} fires it\'s {weapon.name} at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    f'The projectile flies through space and hits, penetrating deep into the ships hull and dealing {damage} damage!')
+            else:
+                printWithTypingAnimation(
+                    f'Just as the railgun is about to fire, the gun jams failing to fire!')
+        case "Torpedo Launcher":
             printWithTypingAnimation(
-                f"{dealDamageShipName} opens a torpedo bay and fires a torpedo at {takeDamageShipName}. The torpedo bursts through the {damageTo} of {takeDamageShipName} dealing {damage} damage to it.")
-        case "cannon":
+                f'{attackingShip.name} opens it\'s torpedo bays, firing {weapon.projectilesPerShot} torpedoes at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    f'The torpedoes rumble towards the ship, {weapon.projectilesPerShot - projectilesHitting} {"torpedo is picked up" if weapon.projectilesPerShot - projectilesHitting == 1 else "torpedoes are picked up"} by the point defense system. The remaining {"torpedo bursts" if projectilesHitting == 1 else "torpedoes burst"} into the hull of their target dealing {damage} damage.')
+            else:
+                printWithTypingAnimation(
+                    'Just as the torpedoes are about to hit, the point defense system springs into action and destroys all of them!')
+        case "Artillery Cannon":
             printWithTypingAnimation(
-                f"{dealDamageShipName} orients its cannon towards {takeDamageShipName} and fires it. The projectile explodes on impact dealing {damage} damage to the {damageTo}.")
+                f'{attackingShip.name} fires it\'s {weapon.name} at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    f'The {weapon.projectilesPerShot} projectiles fly through space, {projectilesHitting} {"shot hits" if projectilesHitting == 1 else "shots hit"}, exploding on impact and dealing {damage} damage to the hull!')
+            else:
+                printWithTypingAnimation(
+                    f'The {weapon.projectilesPerShot} projectiles fly through space, but somehow all of them miss!')
+        case "Plasma Cannon":
+            # Railgun can only have one projectile per shot
+            printWithTypingAnimation(
+                f'{attackingShip.name} starts prepping it\'s {weapon.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    'The plasma beam illuminates the darkness of space. The beam hits the ship melting the hull and dealing {damage} damage!')
+            else:
+                printWithTypingAnimation(
+                    f'The plasma beam starts to form, but then it suddenly stops. A leak in the plasma chamber has caused the beam to stop!')
+        case "Gatling Gun":
+            printWithTypingAnimation(
+                f'{attackingShip.name} points it\'s {weapon.name} at {targetShip.name}!', newLines=0)
+            if damage:
+                printWithTypingAnimation(
+                    'It rattles off {weapon.projectilesPerShot} shots, {projectilesHitting} {"shot impacts" if projectilesHitting == 1 else "shots impact"}, the hull dealing {damage} damage!')
+            else:
+                printWithTypingAnimation(
+                    'Just as the gun is about to unleash it\'s fury, the barrel jams!')
     print()
+    return damage
 
 
-def printProgessBar(title: str, fill: str = '#', speed: float = 0.1) -> None:
+def printProgressBar(title: str, fill: str = '#', speed: float = 0.1) -> None:
     thread = Thread(target=speak, args=(title,))
     thread.start()
     bar = Bar(title, max=20, fill=fill, suffix='%(percent)d%%', )
@@ -71,9 +120,9 @@ def printProgessBar(title: str, fill: str = '#', speed: float = 0.1) -> None:
     bar.finish()
 
 
-def prompt(question: str, options: list[str] | None = None) -> str:
+def prompt(question: str, options: list[str] | None = [], hiddenOptions: list[str] = []) -> str:
     printWithTypingAnimation(question)
-    if options is not None:
+    if options:
         thread = Thread(target=speak, args=(
             f"{', '.join([options[i] for i in range(len(options)-1)] + ['or ' + options[-1]])}",))
         thread.start()
@@ -83,33 +132,14 @@ def prompt(question: str, options: list[str] | None = None) -> str:
         while True:
             try:
                 choice = input("> ")
-                if choice in options:
+                if choice in options or choice in hiddenOptions:
                     print()
                     return choice
                 else:
-                    thread = Thread(target=speak, args=("Invalid choice",))
-                    thread.start()
                     printWithTypingAnimation("Invalid choice")
-                    thread.join()
             except ValueError:
-                thread = Thread(target=speak, args=("Invalid choice",))
-                thread.start()
                 printWithTypingAnimation("Invalid choice")
-                thread.join()
     else:
         returnInput = input("> ")
         print()
         return returnInput
-
-
-if __name__ == '__main__':
-    print('Typing animation:')
-    printWithTypingAnimation('Hello world!')
-    print('\nDialogue:')
-    printDialogue('Bob', 'Hello world!')
-    print('\nProgress bar:')
-    printProgessBar('Loading', fill='=', speed=0.05)
-    print('\nPrompt:')
-    prompt('What is your name?')
-    print('\nPrompt with Options:')
-    prompt('What is your favorite color?', ['Red', 'Blue', 'Green'])
