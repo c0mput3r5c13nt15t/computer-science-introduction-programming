@@ -6,16 +6,51 @@ from progress.bar import Bar
 import time
 from art import tprint
 from threading import Thread
+import re
 
 
-def speak(text):
-    currentPath = os.path.dirname(os.path.abspath(__file__))
-    tts = gTTS(text=text, lang='en')
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
-    filename = f"{currentPath}/tmp-audio-{str(time.time())}.mp3"
-    tts.save(filename)
-    os.system("play \"" + filename + "\" -q -t alsa")
-    os.remove(filename)
+
+colorsForRegex: list[tuple[str, str]] = [
+    ("Stray", bcolors.OKBLUE),
+    ("you[a-z\']*\b", bcolors.OKCYAN),
+    ("Allied Systems", bcolors.OKGREEN),
+    ("Allied Systems( Fleet)*", bcolors.OKGREEN),
+    ("Empire( of the Suns)*", bcolors.FAIL),
+    ("Elcaro system", bcolors.WARNING),
+]
+
+
+def colorText(text: str) -> str:
+    # Prefix "You" with color
+    for string in colorsForRegex:
+        text = re.sub(string[0], string[1] + r'\g<0>' +
+                      bcolors.ENDC, text, flags=re.IGNORECASE)
+    return text
+
+
+def speak(text, printError=True):
+    try:
+        currentPath = os.path.dirname(os.path.abspath(__file__))
+        tts = gTTS(text=text, lang='en')
+
+        filename = f"{currentPath}/tmp-audio-{str(time.time())}.mp3"
+        tts.save(filename)
+        os.system("play \"" + filename + "\" -q -t alsa")
+        os.remove(filename)
+    except:
+        if printError:
+            printWithTypingAnimation("Error: Could not play audio", newLines=2)
 
 
 def makeStringSpecificLength(string: str, length: int, fill: str = ' ') -> str:
@@ -25,6 +60,7 @@ def makeStringSpecificLength(string: str, length: int, fill: str = ' ') -> str:
 def printWithTypingAnimation(text: str, speed: float = 0.08, newLines=1) -> None:
     thread = Thread(target=speak, args=(text,))
     thread.start()
+    text = colorText(text)
     for letter in text:
         print(letter, end='', flush=True)
         time.sleep(speed)
@@ -73,7 +109,7 @@ def printFireWeapon(attackingShip: Spacecraft, targetShip: Spacecraft, weapon: W
                 f'{attackingShip.name} opens it\'s torpedo bays, firing {weapon.projectilesPerShot} torpedoes at {targetShip.name}!', newLines=0)
             if damage:
                 printWithTypingAnimation(
-                    f'The torpedoes rumble towards the ship, {weapon.projectilesPerShot - projectilesHitting} {"torpedo is picked up" if weapon.projectilesPerShot - projectilesHitting == 1 else "torpedoes are picked up"} by the point defense system. The remaining {"torpedo bursts" if projectilesHitting == 1 else "torpedoes burst"} into the hull of their target dealing {damage} damage.')
+                    f'The torpedoes rumble towards the ship, {weapon.projectilesPerShot - projectilesHitting} {"torpedo is picked up" if weapon.projectilesPerShot - projectilesHitting == 1 else "torpedoes are picked up"} by the point defense system. The remaining {"torpedo bursts" if projectilesHitting == 1 else "torpedoes burst"} into the hull of the target dealing {damage} damage.')
             else:
                 printWithTypingAnimation(
                     'Just as the torpedoes are about to hit, the point defense system springs into action and destroys all of them!')
@@ -101,7 +137,7 @@ def printFireWeapon(attackingShip: Spacecraft, targetShip: Spacecraft, weapon: W
                 f'{attackingShip.name} points it\'s {weapon.name} at {targetShip.name}!', newLines=0)
             if damage:
                 printWithTypingAnimation(
-                    'It rattles off {weapon.projectilesPerShot} shots, {projectilesHitting} {"shot impacts" if projectilesHitting == 1 else "shots impact"}, the hull dealing {damage} damage!')
+                    f'It rattles off {weapon.projectilesPerShot} shots, {projectilesHitting} {"shot impacts" if projectilesHitting == 1 else "shots impact"}, the hull dealing {damage} damage!')
             else:
                 printWithTypingAnimation(
                     'Just as the gun is about to unleash it\'s fury, the barrel jams!')

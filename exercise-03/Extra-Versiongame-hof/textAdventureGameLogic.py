@@ -8,20 +8,17 @@ from random import choice, choices, randint
 # Intro scene
 
 
-def introScene(game: Game) -> None:
-    io.printWithTypingAnimation('It\'s the year 2143. The war between the Allied Systems and the Empire of the Suns has been raging for two years now. The Empire has been slowly but surely gaining ground, and the Allied Systems Fleet has taken heavy losses. The Allied Systems have been forced to take defensive position, defending the remaining colonies against enemy attacks at all costs.')
-    sleep(2)
-    print()
-    io.printWithTypingAnimation(
-        f'For a few weeks now, you have been the captain aboard the destroyer "{game.playerSpaceship.name}".', newLines=0)
-    io.printWithTypingAnimation(
-        'You were only a cadet when you were promoted to the rank of captain. You have never fought in a real battle, heck, you have never even been on a real spaceship before. Of course, the simulations are good, but they\'re nothing compared to commanding a real ship.')
-    sleep(2)
-    print()
-    io.printWithTypingAnimation(
-        'You are on a routine patrol in the "Elcaro" system. There haven\'t been any hostilities in the area so far, but you are nervous nonetheless.', newLines=0)
-    io.printWithTypingAnimation(
-        'You are currently in the bridge of your ship. The bridge is a small room with a few consoles and a chair in the middle. The chair is yours. You sit down and log into the ship\'s computer.', newLines=2)
+def introScene(game: Game, skipIntro: bool = False) -> None:
+    if not skipIntro:
+        io.printWithTypingAnimation('It\'s the year 2143. The war between the Allied Systems and the Empire of the Suns has been raging for two years now. The Empire has been slowly but surely gaining ground, and the Allied Systems Fleet has taken heavy losses. The Allied Systems have been forced to take defensive position, defending the remaining colonies against enemy attacks at all costs.', newLines=2)
+        io.printWithTypingAnimation(
+            f'For a few weeks now, you have been the captain aboard the destroyer {game.playerSpaceship.name}.', newLines=0)
+        io.printWithTypingAnimation(
+            'You were only a cadet when you were promoted to the rank of captain. You have never fought in a real battle, heck, you have never even been on a real spaceship before. Of course, the simulations are good, but they\'re nothing compared to commanding a real ship.', newLines=2)
+        io.printWithTypingAnimation(
+            'You are on a routine patrol in the Elcaro system. There haven\'t been any hostilities in the area so far, but you are nervous nonetheless.', newLines=0)
+        io.printWithTypingAnimation(
+            'You are currently in the bridge of your ship. The bridge is a small room with a few consoles and a chair in the middle. The chair is yours. You sit down and log into the ship\'s computer.', newLines=2)
     print('---- Ship computer ----')
     game.username = input('Username: ')
     game.password = getpass()
@@ -76,7 +73,8 @@ def lookAround(game: Game) -> Game:
         game.plotPoints.append('lookedAtCoffeeCup')
         io.printWithTypingAnimation(
             'You see the coffee cup on the table.', newLines=0)
-        io.printWithTypingAnimation('You think about taking a sip.')
+        io.printWithTypingAnimation(
+            'You think about taking a sip.', newLines=2)
     elif item == 'picture of your family':
         game.plotPoints.append('lookedAtFamilyPicture')
         io.printWithTypingAnimation(
@@ -131,8 +129,7 @@ def admireShip(game: Game) -> None:
 
 def secondScene(game: Game) -> None:
     enemyCount = choices([1, 2, 3], [5, 2, 1], k=1)[0]
-    for i in range(enemyCount):
-        game.newEnemySpaceship()
+    game.newEnemySpaceship(enemyCount)
     io.printWithTypingAnimation(
         f'*Sirens blare* "Enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"} detected!"', newLines=0)
     io.printWithTypingAnimation(
@@ -223,7 +220,9 @@ def secondScene(game: Game) -> None:
 
 def scanShips(game: Game) -> None:
     io.printWithTypingAnimation(
-        f'You instruct the Science Officer to scan the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.')
+        f'You instruct the Science Officer to scan the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=2)
+    io.printProgressBar(
+        f'Scanning enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}', fill='█')
     for enemySpaceships in game.enemySpaceships:
         print()
         print(enemySpaceships)
@@ -266,6 +265,8 @@ def attack(game: Game) -> None:
             game.playerSpaceship.hull -= damage
 
             if damage:
+                if game.playerSpaceship.hull <= 0:
+                    shipExplodesEnding(game)
 
                 if game.playerSpaceship.hull <= 0.7 * MAX_PLAYERSHIP_HEALTH and game.playerSpaceship.hull > 0.4 * MAX_PLAYERSHIP_HEALTH and 'hullIntegrityBelow70' not in game.plotPoints:
                     io.printDialogue(
@@ -291,9 +292,6 @@ def attack(game: Game) -> None:
                         retreat(game)
                     else:
                         game.plotPoints.append('fightToTheDeath')
-
-                if game.playerSpaceship.hull <= 0:
-                    shipExplodesEnding(game)
 
         if 'distressSignalSent' in game.plotPoints and choices([True, False], [0.1, 0.9], k=1)[0]:
             helpArrivesEnding(game)
@@ -328,11 +326,11 @@ def retreat(game: Game) -> None:
             io.printWithTypingAnimation(
                 f'The engines roar to life and the ship starts to move away from the enemy {"ship" if len(game.enemySpaceships) == 1 else "ships"}.', newLines=2)
 
-            canCatchUp = False
-            for enemySpaceship in game.enemySpaceships:
-                if enemySpaceship.speed > game.playerSpaceship.speed:
-                    canCatchUp = True
-                    break
+            fastestEnemySpacecraft = max(
+                game.enemySpaceships, key=lambda enemySpaceship: enemySpaceship.speed)
+
+            canCatchUp = choices([True, False], [
+                                 fastestEnemySpacecraft.speed, game.playerSpaceship.speed * 1.3], k=1)[0]
 
             if canCatchUp:
                 io.printWithTypingAnimation(
@@ -528,7 +526,7 @@ def shipExplodesEnding(game: Game) -> None:
             'You might have died, but your fearless actions will be remembered for generations to come. You were the sort of brave captain that will lead the Allied Systems Fleet to victory.', newLines=2)
     elif 'lookedAtFamilyPicture' in game.plotPoints:
         io.printWithTypingAnimation(
-            'When you family hears about your death few days later, they are devastated. Your wife can\'t stop crying and your children are inconsolable. You will be missed.', newLines=2)
+            'When you family hears about your death a few days later, they are devastated. Your wife can\'t stop crying and your children are inconsolable. You will be missed.', newLines=2)
 
     io.printWithTypingAnimation('The end.')
     exit()

@@ -63,7 +63,7 @@ Aqua = Spacecraft("Aqua", """
     ] [] [=] [-*@
    :::-
 """, 10, 36, 81, [railgun.name, railgun.name, smallLaserTurret.name])
-Copbra = Spacecraft("Cobra", """
+Cobra = Spacecraft("Cobra", """
    }{=
      D-) (0()8<)]X(
    +[] X=0} {|X()*<>**
@@ -179,7 +179,12 @@ class Game:
         self.plotPoints: list[str] = []
         self.enemySpaceships: list[Spacecraft] = []
 
-    def newEnemySpaceship(self) -> None:
-        self.enemySpaceships.append(choice(
-            [Aqua, Copbra, Stinger, Spike, Nimbus, Tsar, Shockwave, Vortex, Phazek, Tilde, Pling, Hyperion, Nexus]))
-        self.enemySpaceships = list(set(self.enemySpaceships))
+    def newEnemySpaceship(self, count: int) -> None:
+        while True:
+            enemySpaceship = choice([Cobra, Stinger, Spike, Nimbus, Tsar,
+                                    Shockwave, Vortex, Phazek, Tilde, Pling, Hyperion, Nexus])
+            if enemySpaceship not in self.enemySpaceships:
+                self.enemySpaceships.append(enemySpaceship)
+                break
+        self.enemySpaceships = choices(
+            [Cobra, Stinger, Spike, Nimbus, Tsar, Shockwave, Vortex, Phazek, Tilde, Pling, Hyperion, Nexus], k=count)

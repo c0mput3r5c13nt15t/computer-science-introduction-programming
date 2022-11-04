@@ -6,4 +6,6 @@ game = Game()
 
 print('')
 io.tprint(game.playerSpaceship.name, font='small')
-gameLogic.introScene(game)
+io.speak(game.playerSpaceship.name, printError=True)
+skipIntro = io.prompt('Skip intro?: ', ['Yes', 'No']) == 'Yes'
+gameLogic.introScene(game, skipIntro)
