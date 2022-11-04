@@ -1,6 +1,6 @@
 import os
 from random import choice
-from textAdventureClasses import Spacecraft, Weapon
+from stray.textAdventureClasses import Spacecraft, Weapon
 from gtts import gTTS
 from progress.bar import Bar
 import time

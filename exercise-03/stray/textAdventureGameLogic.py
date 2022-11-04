@@ -1,6 +1,6 @@
 from time import sleep
-import textAdventureIO as io
-from textAdventureClasses import *
+import stray.textAdventureIO as io
+from stray.textAdventureClasses import *
 from getpass import getpass
 from random import choice, choices, randint
 
