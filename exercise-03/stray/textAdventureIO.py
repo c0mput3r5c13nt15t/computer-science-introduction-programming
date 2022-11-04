@@ -27,7 +27,7 @@ colorsForRegex: list[tuple[str, str]] = [
     # ("you(r(s)?)?", bcolors.WARNING),
     ("Allied Systems", bcolors.OKGREEN),
     ("Empire( of the Suns)?", bcolors.FAIL),
-    ("\*Sirens blare\*", bcolors.FAIL),
+    ("\\*Sirens blare\\*", bcolors.FAIL),
     ("enemy( ship(s)?)?( intruders)?", bcolors.FAIL),
     ("Elcaro system", bcolors.HEADER),
     ("\\d* damage", bcolors.FAIL),
@@ -38,7 +38,7 @@ colorsForRegex: list[tuple[str, str]] = [
     ("First Officer|Second Officer|Science Officer|Tactics Commander", bcolors.OKCYAN),
     ("plant", bcolors.OKGREEN),
     ("The end.", bcolors.BOLD),
-    ("Hull integrity at \d*%", bcolors.FAIL),
+    ("Hull integrity at \\d*%", bcolors.FAIL),
 ]
 
 
@@ -59,9 +59,10 @@ def speak(text, printError=True):
         tts.save(filename)
         os.system("play \"" + filename + "\" -q -t alsa")
         os.remove(filename)
-    except:
+    except Exception as e:
         if printError:
-            printWithTypingAnimation("Error: Could not play audio", newLines=2)
+            printWithTypingAnimation(
+                f"Error: Could not play audio: {e}", newLines=2)
 
 
 def makeStringSpecificLength(string: str, length: int, fill: str = ' ') -> str:
