@@ -300,7 +300,7 @@ def attack(game: Game) -> None:
 
 def enemyShipDefeated(game: Game, targetShip: Spacecraft) -> Game:
     defeat = choice(['is obliterated as it\'s reactor overheats and violently explodes',
-                    'can\'t withstand the structural damages and breaks apart', 'is rendered inoperable as the command bridge is destroyed'])
+                    'can\'t withstand the structural damage and breaks apart', 'is rendered inoperable as the command bridge is destroyed'])
     io.printWithTypingAnimation(f'The enemy ship {defeat}.', newLines=2)
     game.enemySpaceships.remove(targetShip)
     return game
@@ -466,7 +466,7 @@ def enemyDestroyedEnding(game: Game) -> None:
             'Just as peace returns to the ship, you hear a meow. It\'s {game.catName}. He jumps into your lap and purrs as you gently pet him.', newLines=2)
     elif 'lookedAtPlant' in game.plotPoints:
         io.printWithTypingAnimation(
-            'Relieved, look around the bridge, in the corner you see the remains of a plant pot and next to it the uprooted plant. The heavy shaking of the ship has caused it to fall over. You pick up the small plant, maybe it is your favorite plant after all.', newLines=2)
+            'Relieved you look around the bridge, in the corner you see the remains of a plant pot and next to it the uprooted plant. The heavy shaking of the ship has caused it to fall over. You pick up the small plant, maybe it is your favorite plant after all.', newLines=2)
 
     if 'distressSignalSent' in game.plotPoints:
         io.printWithTypingAnimation(
