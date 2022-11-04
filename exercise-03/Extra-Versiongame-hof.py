@@ -31,4 +31,6 @@ Credits:
 - Ascii Spaceships: https://huw2k8.itch.io/vortex-ascii
 - Inspiration: https://www.youtube.com/c/watchdust
 
+PS: The code is in the stray folder, because I wanted to demonstrate good code structure.
+
 """
