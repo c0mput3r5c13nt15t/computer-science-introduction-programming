@@ -25,7 +25,7 @@ def introScene(game: Game, skipIntro: bool = False) -> None:
     print('-----------------------\n')
     io.printWithTypingAnimation(
         'You check the status of the ship.', newLines=2)
-    io.printProgressBar('Checking status', speed=0.5)
+    io.printProgressBar('Checking status', speed=0.5, fill='█')
     print()
     print(game.playerSpaceship)
     print()
@@ -276,14 +276,14 @@ def attack(game: Game) -> None:
 
                 if game.playerSpaceship.hull <= 0.4 * MAX_PLAYERSHIP_HEALTH and game.playerSpaceship.hull > 0.25 * MAX_PLAYERSHIP_HEALTH and 'hullIntegrityBelow40' not in game.plotPoints:
                     io.printDialogue(
-                        'Second Officer', f'We\'re taking heavy damage! Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%.', 'says')
+                        'Second Officer', f'We\'re taking heavy fire! Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%.', 'says')
                     game.plotPoints.append('hullIntegrityBelow40')
                     print()
 
                 if game.playerSpaceship.hull <= 0.25 * MAX_PLAYERSHIP_HEALTH:
                     io.printDialogue('Second Officer',
                                      f'Hull integrity at {round(game.playerSpaceship.hull / MAX_PLAYERSHIP_HEALTH * 100)}%. The reactor is destabilizing!', 'shouts')
-                    io.printDialogue('Tactics Command',
+                    io.printDialogue('Tactics Commander',
                                      'We need to retreat NOW!', 'shouts')
                     io.printDialogue(
                         'First Officer', 'No! We have to fight until the end!', 'exclaims')

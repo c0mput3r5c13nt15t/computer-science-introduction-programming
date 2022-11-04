@@ -22,12 +22,23 @@ class bcolors:
 
 
 colorsForRegex: list[tuple[str, str]] = [
-    ("Stray", bcolors.OKBLUE),
-    ("you[a-z\']*\b", bcolors.OKCYAN),
+    ("Stray", bcolors.WARNING),
+    # ("you'[a-z]\b", bcolors.WARNING),
+    # ("you(r(s)?)?", bcolors.WARNING),
     ("Allied Systems", bcolors.OKGREEN),
-    ("Allied Systems( Fleet)*", bcolors.OKGREEN),
-    ("Empire( of the Suns)*", bcolors.FAIL),
-    ("Elcaro system", bcolors.WARNING),
+    ("Empire( of the Suns)?", bcolors.FAIL),
+    ("\*Sirens blare\*", bcolors.FAIL),
+    ("enemy( ship(s)?)?( intruders)?", bcolors.FAIL),
+    ("Elcaro system", bcolors.HEADER),
+    ("\\d* damage", bcolors.FAIL),
+    ("Aqua|Cobra|Stinger|Spike|Nimbus|Tsar|Shockwave|Vortex|Phazek|Tilde|Pling|Hyperion|Nexus", bcolors.FAIL),
+    ("Aurora|Muinnellim", bcolors.OKGREEN),
+    ("Small Laser Turret|Missile Launcher|Railgun|Torpedo Launcher|Artillery Cannon|Plasma Beam|Gatling Gun|missile bays|torpedo bays", bcolors.OKBLUE),
+    ("Invalid choice", bcolors.FAIL),
+    ("First Officer|Second Officer|Science Officer|Tactics Commander", bcolors.OKCYAN),
+    ("plant", bcolors.OKGREEN),
+    ("The end.", bcolors.BOLD),
+    ("Hull integrity at \d*%", bcolors.FAIL),
 ]
 
 
@@ -57,7 +68,7 @@ def makeStringSpecificLength(string: str, length: int, fill: str = ' ') -> str:
     return string + fill * (length - len(string))
 
 
-def printWithTypingAnimation(text: str, speed: float = 0.08, newLines=1) -> None:
+def printWithTypingAnimation(text: str, speed: float = 0.05, newLines=1) -> None:
     thread = Thread(target=speak, args=(text,))
     thread.start()
     text = colorText(text)
