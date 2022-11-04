@@ -1,4 +1,4 @@
-from stray import *
+import stray
 
 """
  ___  _
