@@ -1,6 +1,6 @@
 # Notes
 
-Zeitbedarf: X.X h
+Zeitbedarf: 0.5 h
 
 ## Erfahrungen
 YOUR TEXT HERE
