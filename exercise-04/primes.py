@@ -17,7 +17,7 @@ def primes(n: int) -> list[int]:
     x = 2
     for i in range(n - 1):
         if is_prime(x, ps):
-            ps.append(x)
+            ps += [x]
         x += 1
     return ps
 
