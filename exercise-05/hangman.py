@@ -4,8 +4,7 @@ import random
 
 def input_choice(question: str, options: list[str]) -> str:
     """
-    Asks the user a question and returns the answer if it is in the list of options.
-    If the answer is not in the list of options, the question is asked again.
+    Asks the user a question and returns the answer if it is in the list of options. If the answer is not in the list of options, the question is asked again.
     """
     print(f"{question} [{' | '.join(options)}]")
     answer = input('> ')
@@ -26,6 +25,9 @@ def shape(word: str, guesses: str) -> str:
 
 
 def hangman(word: str, allowed_mistakes: int) -> None:
+    """
+    Play a round of hangman. The player has to input single letter guess until the word is guessed or the allowed number of mistakes is reached.
+    """
     mistakes = 0
     guesses = ""
     while mistakes < allowed_mistakes:
