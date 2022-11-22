@@ -1,18 +1,22 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class Food:
-    def __init__(self, expiration_date: str):
-        self.expiration_date = expiration_date
+    expiration_date: str
 
 
+@dataclass
 class NonFood:
     pass
 
 
+@dataclass
 class Stock:
-    def __init__(self, name: str, units: int, price_per_unit: int, kind: Food | NonFood):
-        self.name = name
-        self.units = units
-        self.price_per_unit = price_per_unit
-        self.kind = kind
+    name: str
+    units: int
+    price_per_unit: int
+    kind: Food | NonFood
 
 
 def is_expired(stock: Stock, date: str) -> bool:

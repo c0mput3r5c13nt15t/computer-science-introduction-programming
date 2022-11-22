@@ -1,28 +1,31 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class MailAddress:
-    def __init__(self, name, domain):
-        self.name = name
-        self.domain = domain
+    name: str
+    domain: str
 
 
+@dataclass
 class Mail:
-    def __init__(self, sender: MailAddress, receiver: MailAddress, subject: str, body: str):
-        self.sender = sender
-        self.receiver = receiver
-        self.subject = subject
-        self.body = body
+    sender: MailAddress
+    receiver: MailAddress
+    subject: str
+    body: str
 
 
+@dataclass
 class MailAccount:
-    def __init__(self, name: str, inbox: list[Mail], outbox: list[Mail]):
-        self.name = name
-        self.inbox = inbox
-        self.outbox = outbox
+    name: str
+    inbox: list[Mail]
+    outbox: list[Mail]
 
 
+@dataclass
 class MailServer:
-    def __init__(self, domain: str, accounts: list[MailAccount]):
-        self.domain = domain
-        self.accounts = accounts
+    domain: str
+    accounts: list[MailAccount]
 
 
 def show_mail_address(mail_address: MailAddress) -> str:
