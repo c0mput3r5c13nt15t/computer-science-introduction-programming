@@ -25,7 +25,8 @@ def is_expired(stock: Stock, date: str) -> bool:
             return expiration_date < date
         case Stock(_, _, _, NonFood()):
             return False
-    return False
+        case _:
+            return False
 
 
 def get_expired(stocks: list[Stock], date: str) -> list[Stock]:
