@@ -20,10 +20,12 @@ class Stock:
 
 
 def is_expired(stock: Stock, date: str) -> bool:
-    if isinstance(stock.kind, Food):
-        return date > stock.kind.expiration_date
-    else:
-        return False
+    match stock:
+        case Stock(_, _, _, Food(expiration_date)):
+            return expiration_date < date
+        case Stock(_, _, _, NonFood()):
+            return False
+    return False
 
 
 def get_expired(stocks: list[Stock], date: str) -> list[Stock]:
