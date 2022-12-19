@@ -5,6 +5,10 @@ from geo import Object2D, Vector2D, GuiWrapper
 
 @dataclass
 class Circle(Object2D):
+    '''
+    Invarianten:
+    - radius > 0    
+    '''
     __radius: float
 
     def __post_init__(self):
@@ -33,6 +37,12 @@ class Circle(Object2D):
 
 @dataclass
 class RotatableEllipse(Object2D):
+    '''
+    Invarianten:
+    - size.x > 0
+    - size.y > 0
+    - 0 <= angle < 2 * pi
+    '''
     __size: Vector2D
     __angle: float = 0  # Winkel in Bogenmaß
 
@@ -76,8 +86,8 @@ class RotatableEllipse(Object2D):
 
 @dataclass
 class Triangle(Object2D):
-    __edge1: Vector2D
-    __edge2: Vector2D
+    __edge1: Vector2D  # Relative Position des ersten Eckpunktes
+    __edge2: Vector2D  # Relative Position des zweiten Eckpunktes
 
     @property
     def edge1(self) -> Vector2D:

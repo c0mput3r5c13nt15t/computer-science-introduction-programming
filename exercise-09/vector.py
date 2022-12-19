@@ -16,6 +16,10 @@ def apply_binary_operator(op: str, a: float, b: float) -> float:
 
 @dataclass
 class Vector():
+    '''
+    Invariante:
+    - len(values) > 0
+    '''
     __values: list[float] = field(default_factory=list)
 
     def __post_init__(self):
