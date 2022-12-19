@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Union
 
 
@@ -16,7 +16,7 @@ def apply_binary_operator(op: str, a: float, b: float) -> float:
 
 @dataclass
 class Vector():
-    __values: list[float]
+    __values: list[float] = field(default_factory=list)
 
     def __post_init__(self):
         assert len(self.values) > 0, "Dimension must be greater than 0"
