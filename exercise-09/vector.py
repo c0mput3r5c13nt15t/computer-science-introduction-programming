@@ -18,17 +18,23 @@ def apply_binary_operator(op: str, a: float, b: float) -> float:
 class Vector():
     __values: list[float]
 
+    def __post_init__(self):
+        assert len(self.values) > 0, "Dimension must be greater than 0"
+
+        self.__dimension = len(self.values)
+        self.__len = sum([x**2 for x in self.values])**0.5
+
     @property
     def values(self) -> list[float]:
         return self.__values
 
     @property
     def dimension(self) -> int:
-        return len(self.values)
+        return self.__dimension
 
     @property
     def len(self) -> float:
-        return sum([x**2 for x in self.values])**0.5
+        return self.__len
 
     def __str__(self) -> str:
         return f"{self.dimension}D vector: {self.values}"
@@ -37,7 +43,10 @@ class Vector():
         return Vector(self.values)
 
     def __neg__(self) -> 'Vector':
-        return Vector([-x for x in self.values])
+        negated_values = []
+        for value in self.values:
+            negated_values.append(-value)
+        return Vector(negated_values)
 
     def operate_binary(self, op: str, other: Union['Vector', int, float]) -> 'Vector':
         match other:
@@ -57,7 +66,7 @@ class Vector():
 
                 return Vector(new_values)
             case _:
-                raise TypeError(f"Unknown type of other {type(other)}")
+                raise TypeError(f"Cannot operate with type {type(other)}")
 
     def __add__(self, other: Union['Vector', int, float]) -> 'Vector':
         return self.operate_binary("+", other)

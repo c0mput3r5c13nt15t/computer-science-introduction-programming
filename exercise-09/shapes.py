@@ -5,11 +5,7 @@ from geo import Object2D, Vector2D, GuiWrapper
 
 @dataclass
 class Circle(Object2D):
-    __radius: int
-
-    @property
-    def radius(self) -> int:
-        return self.__radius
+    __radius: float
 
     def __post_init__(self):
         assert self.radius > 0, f"Radius {self.radius} muss größer als 0 sein."
@@ -18,23 +14,27 @@ class Circle(Object2D):
         self.__bottom_right = super().pos + \
             Vector2D(self.radius, self.radius)
 
+    @property
+    def radius(self) -> float:
+        return self.__radius
+
+    @property
+    def top_left(self) -> Vector2D:
+        return self.__top_left
+
+    @property
+    def bottom_right(self) -> Vector2D:
+        return self.__bottom_right
+
     def draw(self, gui, fillcolor="black", outlinecolor="black"):
-        gui.canvas.create_oval(self.__top_left.x, self.__top_left.y, self.__bottom_right.x,
-                               self.__bottom_right.y, fill=fillcolor, outline=outlinecolor)
+        gui.canvas.create_oval(self.top_left.x, self.top_left.y, self.bottom_right.x,
+                               self.bottom_right.y, fill=fillcolor, outline=outlinecolor)
 
 
 @dataclass
 class RotatableEllipse(Object2D):
     __size: Vector2D
     __angle: float = 0  # Winkel in Bogenmaß
-
-    @property
-    def size(self) -> Vector2D:
-        return self.__size
-
-    @property
-    def angle(self) -> float:
-        return self.__angle
 
     def __post_init__(self):
         assert self.size.x > 0, f"X-Radius {self.size.x} muss größer als 0 sein."
@@ -44,25 +44,34 @@ class RotatableEllipse(Object2D):
         assert self.angle < 2 * \
             math.pi, f"Der Winkel {self.angle} muss kleiner 2 * pi sein."
 
+    @property
+    def size(self) -> Vector2D:
+        return self.__size
+
+    @property
+    def angle(self) -> float:
+        return self.__angle
+
     def draw(self, gui, fillcolor="black", outlinecolor="black"):
-        points_without_rotation = []
-        # 360 points that describe the ellipse
+        points_original = []
         for i in range(360):
             x = self.size.x * math.cos(math.radians(i))
             y = self.size.y * math.sin(math.radians(i))
-            points_without_rotation.append(Vector2D(x, y))
-        points = []
-        for point in points_without_rotation:
-            # rotate the points counterclockwise
+            points_original += [Vector2D(x, y)]
+        points_rotated = []
+        # The ellipse is rotated by the negative angle because the y-axis is inverted
+        for point in points_original:
             x = point.x * math.cos(-self.angle) - \
                 point.y * math.sin(-self.angle)
             y = point.x * math.sin(-self.angle) + \
                 point.y * math.cos(-self.angle)
-            points.append(x + super().pos.x)
-            points.append(y + super().pos.y)
-        # TODO fix the rotation
+            points_rotated += [Vector2D(x, y)]
+        points_transformed = []
+        for point in points_rotated:
+            points_transformed.append(point.x + self.pos.x)
+            points_transformed.append(point.y + self.pos.y)
         gui.canvas.create_polygon(
-            *points, fill=fillcolor, outline=outlinecolor)
+            *points_transformed, fill=fillcolor, outline=outlinecolor)
 
 
 @dataclass
