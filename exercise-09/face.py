@@ -13,8 +13,10 @@ def draw_clown_face():
     nose = RotatableEllipse(Vector2D(150, 160), Vector2D(15, 30), 0)
     mouth = Triangle(Vector2D(100, 210), Vector2D(
         100, 0), Vector2D(50, 30))
-    ear1 = RotatableEllipse(Vector2D(55, 100), Vector2D(10, 20), 7/8*math.pi)
-    ear2 = RotatableEllipse(Vector2D(245, 100), Vector2D(10, 20), 1/8*math.pi)
+    ear1 = RotatableEllipse(
+        Vector2D(55, 100), Vector2D(10, 20), 7 / 8 * math.pi)
+    ear2 = RotatableEllipse(
+        Vector2D(245, 100), Vector2D(10, 20), 1 / 8 * math.pi)
     eyebrow1 = Triangle(Vector2D(75, 80), Vector2D(
         50, -15), Vector2D(50, 0))
     eyebrow2 = Triangle(Vector2D(175, 80), Vector2D(

@@ -7,7 +7,7 @@ from geo import Object2D, Vector2D, GuiWrapper
 class Circle(Object2D):
     '''
     Invarianten:
-    - radius > 0    
+    - radius > 0
     '''
     __radius: float
 
