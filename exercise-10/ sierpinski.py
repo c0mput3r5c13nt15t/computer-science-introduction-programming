@@ -6,7 +6,7 @@ from turtle import pendown, penup, setup, hideturtle, speed, forward, left, righ
 # P = {F -> F-G+F+G-F, G -> GG}
 
 
-def zeroLSystem(V: list[str], w: str, P: dict[str, str], n: int) -> str:
+def zeroLSystem(w: str, P: dict[str, str], n: int) -> str:
     for i in range(n):
         w = ''.join([P[c] if c in P else c for c in w])
     return w
@@ -16,7 +16,6 @@ def turtle_setup():
     setup(600, 600)
     speed(0)
     hideturtle()
-    penup()
     pendown()
 
 
@@ -24,7 +23,7 @@ def sierpinski(size: int, n: int):
     V = ['F', 'G', '+', '-']
     w = 'F-G-G'
     P = {'F': 'F-G+F+G-F', 'G': 'GG'}
-    sierpinski = zeroLSystem(V, w, P, n)
+    sierpinski = zeroLSystem(w, P, n)
 
     turtle_setup()
     for c in sierpinski:
@@ -37,10 +36,8 @@ def sierpinski(size: int, n: int):
 
 
 if __name__ == '__main__':
-    V = ['F', 'G', '+', '-']
+    # V = ['F', 'G', '+', '-']
     w = 'F-G-G'
     P = {'F': 'F-G+F+G-F', 'G': 'GG'}
-    print(zeroLSystem(V, w, P, 2))
+    print(zeroLSystem(w, P, 2))
     sierpinski(33, 3)
-    while True:
-        pass
