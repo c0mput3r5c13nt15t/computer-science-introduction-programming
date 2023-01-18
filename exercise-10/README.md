@@ -32,10 +32,11 @@ for py in $STUDENT/$EXERCISE/*.py; do [ -f $py ] || continue; python3.10 -m py_c
 ./validate_notes $STUDENT $EXERCISE
 ```
 
+
 ## Test
 ```
 ============================= test session starts ==============================
-collecting ... collected 26 items
+collecting ... collected 36 items
 
 test_10.py::test_exam_no_toplevel_code PASSED
 test_10.py::test_update_points_typing PASSED
@@ -52,7 +53,7 @@ test_10.py::test_compute_grade PASSED
 test_10.py::test_compute_grade_not_passed PASSED
 test_10.py::test_compute_grade_buckets FAILED
 test_10.py::test_compute_grade_buckets_new_pass_points FAILED
-test_10.py::test_cluster_by_grade_typing FAILED
+test_10.py::test_cluster_by_grade_typing PASSED
 test_10.py::test_cluster_by_grade PASSED
 test_10.py::test_cluster_by_grade_all_grades PASSED
 test_10.py::test_cluster_by_grade_1 FAILED
@@ -62,7 +63,17 @@ test_10.py::test_cluster_by_grade_4 FAILED
 test_10.py::test_cluster_by_grade_honors_fail_rate FAILED
 test_10.py::test_cluster_by_grade_uses_max_points FAILED
 test_10.py::test_sierpinski_no_toplevel_code FAILED
+test_10.py::test_sierpinski_typing FAILED
 test_10.py::test_polynom_no_toplevel_code PASSED
+test_10.py::test_polynom_crack_1_example_1 PASSED
+test_10.py::test_polynom_crack_1_example_2 PASSED
+test_10.py::test_polynom_crack_1_example_new PASSED
+test_10.py::test_polynom_crack_2_example_1 PASSED
+test_10.py::test_polynom_crack_2_example_2 PASSED
+test_10.py::test_polynom_crack_2_example_3 PASSED
+test_10.py::test_polynom_crack_2_example_new PASSED
+test_10.py::test_polynom_crack_3_example_1 PASSED
+test_10.py::test_polynom_crack_3_example_new PASSED
 
 =================================== FAILURES ===================================
 __________________________ test_compute_grade_buckets __________________________
@@ -88,35 +99,6 @@ E        +  where 5 = compute_grade({'a_student1': 120, 'a_student2': 105, 'b_st
 E        +  and   5 = compute_grade({'a_student1': 120, 'a_student2': 105, 'b_student1': 104, 'b_student2': 90, ...}, 200, 'c_student2')
 
 test_10.py:123: AssertionError
-_________________________ test_cluster_by_grade_typing _________________________
-
-    def test_cluster_by_grade_typing():
->       check_typing(
-            cluster_by_grade,
-            return_annotation=dict[int, str],
-            named={
-                "student_points": dict[str, int],
-                "max_points": int
-            }
-        )
-
-test_10.py:128: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-function = <function cluster_by_grade at 0x7fd8ff992830>
-return_annotation = dict[int, str], positional = []
-named = {'max_points': <class 'int'>, 'student_points': dict[str, int]}
-
-    def check_typing(function: Callable,
-                     return_annotation=None,
-                     positional: list[Any] = [],
-                     named: dict[str, Any] = {}):
-        given = function.__annotations__
-        if return_annotation:
->           assert given['return'] == return_annotation, 'wrong return type'
-E           AssertionError: wrong return type
-
-tests_lib.py:231: AssertionError
 ___________________________ test_cluster_by_grade_1 ____________________________
 
     def test_cluster_by_grade_1():
@@ -275,7 +257,7 @@ _______________________ test_sierpinski_no_toplevel_code _______________________
     def test_sierpinski_no_toplevel_code():
 >       check_no_toplevel_statements("sierpinski.py")
 
-test_10.py:237: 
+test_10.py:240: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
 filename = 'sierpinski.py'
@@ -285,11 +267,42 @@ filename = 'sierpinski.py'
 >       with open(filepath, "r") as f:
 E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/c/Users/kraut/Documents/7. Semester/Info Tutorat/2022WS-EiP/m172947g/exercise-10/sierpinski.py'
 
-tests_lib.py:288: FileNotFoundError
+tests_lib.py:290: FileNotFoundError
+____________________________ test_sierpinski_typing ____________________________
+
+    def test_sierpinski_typing():
+>       check_typing(
+            sierpinski,
+            named={"size": int, "n": int}
+        )
+
+test_10.py:244: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+function = <function sierpinski at 0x7f71767a3520>, return_annotation = None
+positional = [], named = {'n': <class 'int'>, 'size': <class 'int'>}
+
+    def check_typing(function: Callable,
+                     return_annotation=None,
+                     positional: list[Any] = [],
+                     named: dict[str, Any] = {}):
+        given = function.__annotations__
+        if return_annotation:
+            assert given['return'] == return_annotation, 'wrong return type'
+            del given['return']
+        else:
+            if given.get('return', None) is None:
+                given.pop('return', None)
+            assert 'return' not in given.keys(), 'wrong return type'
+        for param, annotation in named.items():
+            expected = given.get(param, None)
+>           assert annotation == expected or str(annotation) == str(expected), f'wrong {param} type, {expected} expected, but got {annotation}'
+E           AssertionError: wrong size type, None expected, but got <class 'int'>
+
+tests_lib.py:239: AssertionError
 =========================== short test summary info ============================
 FAILED test_10.py::test_compute_grade_buckets - AssertionError: assert (1 == ...
 FAILED test_10.py::test_compute_grade_buckets_new_pass_points - AssertionErro...
-FAILED test_10.py::test_cluster_by_grade_typing - AssertionError: wrong retur...
 FAILED test_10.py::test_cluster_by_grade_1 - AssertionError: assert {1: ['Stu...
 FAILED test_10.py::test_cluster_by_grade_2 - AssertionError: assert {2: ['Stu...
 FAILED test_10.py::test_cluster_by_grade_3 - AssertionError: assert {3: ['Stu...
@@ -297,5 +310,6 @@ FAILED test_10.py::test_cluster_by_grade_4 - AssertionError: assert {4: ['Stu...
 FAILED test_10.py::test_cluster_by_grade_honors_fail_rate - AssertionError: a...
 FAILED test_10.py::test_cluster_by_grade_uses_max_points - AssertionError: as...
 FAILED test_10.py::test_sierpinski_no_toplevel_code - FileNotFoundError: [Err...
-======================== 10 failed, 16 passed in 0.32s =========================
+FAILED test_10.py::test_sierpinski_typing - AssertionError: wrong size type, ...
+======================== 10 failed, 26 passed in 0.23s =========================
 ```
