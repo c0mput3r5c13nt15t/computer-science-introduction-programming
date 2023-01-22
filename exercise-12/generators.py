@@ -14,9 +14,10 @@ def newton(f: Callable[[float], float], x: float) -> Generator[float, None, None
 
 def generate_target(iterable: Iterator[float], f: Callable[[float], float], target: float) -> Generator[float, None, None]:
     x = next(iterable)
+    yield x
     while abs(f(x)) >= target:
-        yield x
         x = next(iterable)
+        yield x
 
 
 def arithmetic_mean(iterable: Iterator[float]) -> Generator[float, None, None]:
@@ -38,15 +39,17 @@ def filter57(iterable: Iterator[int]) -> Iterator[int]:
 
 
 if __name__ == "__main__":
-    generator = newton(lambda x: 2 * x + 1, 3)
-    for i in range(3):
-        print(next(generator))
+    # generator = newton(lambda x: 2 * x + 1, 3)
+    # for i in range(3):
+    #     print(next(generator))
 
     def f(x): return 2 * x + 1
     generator = newton(f, 3)
-    print(list(generate_target(generator, f, 1e-15)))
 
-    print(list(arithmetic_mean(iter(range(0, 21, 4)))))
+    assert f(list(generate_target(generator, f, 1e-12))[-1]) < 1e-12
+
+    assert list(arithmetic_mean(iter(range(0, 21, 4)))) == [
+        0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
 
     input_iterator = iter(range(0, 26, 5))
     assert list(map13(input_iterator)) == [0, 5, 10, 2, 7, 12]

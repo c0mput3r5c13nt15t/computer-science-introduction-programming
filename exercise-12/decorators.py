@@ -68,10 +68,6 @@ def time_function(f, n):
 if __name__ == "__main__":
     n = 200
 
-    print(fib(n))
-    print(fib_fast(n))
-    print(fib_fast_and_simple(n))
-
     time_function(fib, n)
     time_function(fib_fast, n)
     time_function(fib_fast_and_simple, n)
