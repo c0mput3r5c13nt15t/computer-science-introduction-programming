@@ -41,7 +41,7 @@ def cached(f, cache: dict = dict()):
         if arg_0 in cache:
             return cache[arg_0]
         else:
-            res: int = f(args[0])
+            res = f(args[0])
             cache[arg_0] = res
             return res
     return wrapper
