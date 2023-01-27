@@ -63,6 +63,7 @@ class S(Enum):
     SCREEN_LIGHT_ON = auto()
 
 
+allowed_inputs = ["SENS_TAB", "SENS_ACC"]
 state_translate: dict[tuple[bool, bool], S] = {  # (light?, screen?): state
     (False, False): S.INIT,
     (False, True): S.SCREEN_ON,
@@ -117,7 +118,10 @@ class S_Abstract(State[str, bool]):
         if input == self.__lastAction == self.__activateAction:
             return S_Abstract("", self.__activateAction, not self.__on)
         else:
-            return S_Abstract(input, self.__activateAction, self.__on)
+            if input in allowed_inputs:
+                return S_Abstract(input, self.__activateAction, self.__on)
+            else:
+                return S_Abstract(self.__lastAction, self.__activateAction, self.__on)
 
     def output(self) -> bool:
         return self.__on
@@ -133,3 +137,5 @@ def automaton(input: Iterable[str]):
 if __name__ == "__main__":
     assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_TAB", "SENS_TAB"])) == [
         S.INIT, S.LIGHT_ON, S.LIGHT_ON, S.SCREEN_LIGHT_ON]
+    assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_TAB", "invalid input", "SENS_TAB"])) == [
+        S.INIT, S.LIGHT_ON, S.LIGHT_ON, S.LIGHT_ON, S.SCREEN_LIGHT_ON]
