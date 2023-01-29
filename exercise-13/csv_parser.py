@@ -24,7 +24,4 @@ def update_balance(balance: float, csv_path: str) -> float:
 
 
 if __name__ == "__main__":
-    for line in lines("exercise-13/umsatz.csv"):
-        print(line)
-
     assert update_balance(100.00, "exercise-13/umsatz.csv") == 170.8

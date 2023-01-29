@@ -56,7 +56,7 @@ INP = TypeVar('INP')
 OUT = TypeVar('OUT')
 
 
-class S(Enum):
+class S(Enum):  # Separate definition because no extra states are needed
     INIT = auto()
     LIGHT_ON = auto()
     SCREEN_ON = auto()
@@ -83,6 +83,34 @@ class State(Generic[INP, OUT], ABC):
 
 
 @dataclass
+class S_Init(State[str, S]):
+    def next(self, input: str) -> State[str, S]:
+        return CombinedState(S_After(input, "SENS_ACC"), S_After(input, "SENS_TAB"))
+
+    def output(self) -> str:
+        return ""
+
+
+@dataclass
+class S_After(State[str, bool]):
+    __lastAction: str
+    __activateAction: str
+    __on: bool = field(default=False)
+
+    def next(self, input: str) -> State[str, bool]:
+        if input == self.__lastAction == self.__activateAction:
+            return S_After("", self.__activateAction, not self.__on)
+        else:
+            if input in allowed_inputs:
+                return S_After(input, self.__activateAction, self.__on)
+            else:
+                return S_After(self.__lastAction, self.__activateAction, self.__on)
+
+    def output(self) -> bool:
+        return self.__on
+
+
+@dataclass
 class CombinedState(State[str, S]):
     light: State[str, bool]
     screen: State[str, bool]
@@ -99,34 +127,6 @@ class CombinedState(State[str, S]):
         return state_translate[(out_light, out_screen)]
 
 
-@dataclass
-class S_Init(State[str, S]):
-    def next(self, input: str) -> State[str, S]:
-        return CombinedState(S_Abstract(input, "SENS_ACC"), S_Abstract(input, "SENS_TAB"))
-
-    def output(self) -> str:
-        return ""
-
-
-@dataclass
-class S_Abstract(State[str, bool]):
-    __lastAction: str
-    __activateAction: str
-    __on: bool = field(default=False)
-
-    def next(self, input: str) -> State[str, bool]:
-        if input == self.__lastAction == self.__activateAction:
-            return S_Abstract("", self.__activateAction, not self.__on)
-        else:
-            if input in allowed_inputs:
-                return S_Abstract(input, self.__activateAction, self.__on)
-            else:
-                return S_Abstract(self.__lastAction, self.__activateAction, self.__on)
-
-    def output(self) -> bool:
-        return self.__on
-
-
 def automaton(input: Iterable[str]):
     state: State[str, S] = S_Init()
     for x in input:
@@ -135,7 +135,21 @@ def automaton(input: Iterable[str]):
 
 
 if __name__ == "__main__":
+    assert list(automaton(["SENS_ACC", "SENS_ACC"])) == [
+        S.INIT, S.LIGHT_ON]
+    assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_ACC"])) == [
+        S.INIT, S.LIGHT_ON, S.LIGHT_ON]
+    assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_ACC", "SENS_TAB"])) == [
+        S.INIT, S.LIGHT_ON, S.LIGHT_ON, S.LIGHT_ON]
+    assert list(automaton(["SENS_TAB", "SENS_TAB"])) == [
+        S.INIT, S.SCREEN_ON]
+    assert list(automaton(["SENS_TAB", "SENS_TAB", "SENS_TAB", "SENS_ACC"])) == [
+        S.INIT, S.SCREEN_ON, S.SCREEN_ON, S.SCREEN_ON]
     assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_TAB", "SENS_TAB"])) == [
         S.INIT, S.LIGHT_ON, S.LIGHT_ON, S.SCREEN_LIGHT_ON]
     assert list(automaton(["SENS_ACC", "SENS_ACC", "SENS_TAB", "invalid input", "SENS_TAB"])) == [
         S.INIT, S.LIGHT_ON, S.LIGHT_ON, S.LIGHT_ON, S.SCREEN_LIGHT_ON]
+
+    # Initialize state machine with a specific state
+    assert list(automaton(["SENS_ACC", "SENS_ACC"])) == [
+        S.INIT, S.LIGHT_ON]
