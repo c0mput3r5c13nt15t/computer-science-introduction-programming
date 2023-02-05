@@ -23,7 +23,7 @@ class Event:
 
 def log_event(event: Event):
     match event.event:
-        case (x, y):
+        case(x, y):
             print(f"Mouse clicked at ({x}, {y}).")
         case str(x):
             print(f"Key '{x}' pressed.")
